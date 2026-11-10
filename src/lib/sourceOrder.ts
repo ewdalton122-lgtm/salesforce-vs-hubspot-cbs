@@ -11,9 +11,14 @@ export function pageSourceOrder({ includeCsm = true }: { includeCsm?: boolean } 
     c.hubspot.points.forEach((p) => push(p.source));
     const act = story.acts.find((a) => a.checkId === c.id);
     act?.frictions.forEach((f) => push(f.source));
+    story.officeFrictions[c.id]?.forEach((f) => push(f.source));
     if (c.id === 'cost') {
       growth.stages.forEach((s) => {
         s.salesforce && push(s.salesforce.source);
+        s.hubspot.forEach((b) => push(b.source));
+      });
+      Object.values(growth.officeStages).forEach((s) => {
+        push(s.salesforce.source);
         s.hubspot.forEach((b) => push(b.source));
       });
       ['sf-pricing-sales', 'hs-pricing-sales', 'hs-pricing-data'].forEach(push);
@@ -23,6 +28,12 @@ export function pageSourceOrder({ includeCsm = true }: { includeCsm?: boolean } 
         push(s.salesforce.source);
         push(s.hubspot.source);
       });
+      Object.values(journey.byIndustry).forEach((o) =>
+        Object.values(o).forEach((v) => {
+          v.salesforce?.source && push(v.salesforce.source);
+          v.hubspot?.source && push(v.hubspot.source);
+        }),
+      );
     }
   }
   platform.layers.forEach((l) => {

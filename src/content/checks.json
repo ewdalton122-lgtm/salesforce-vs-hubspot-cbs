@@ -5,9 +5,9 @@
     {
       "id": "data-model", "number": 1, "title": "Your data model,", "titleAccent": "built your way.",
       "salesforce": {
-        "headline": "Build your real business: projects, work orders, job orders, matters and how they connect.",
+        "headline": "Build your real business: {objects} and how they connect.",
         "points": [
-          { "label": "Custom objects with rich relationships for the way services businesses actually work (projects, SOWs, work orders, job orders, candidates, matters)", "source": "sf-data-model" },
+          { "label": "Custom objects with rich relationships for the way services businesses actually work ({objects})", "source": "sf-data-model" },
           { "label": "Multi-level account hierarchies with roll-ups, so every acquired brand fits one model", "source": "sf-data-model" },
           { "label": "Record types: a separate process, fields and layouts per line of business", "source": "sf-data-model" },
           { "label": "Person accounts for households; contacts related to multiple accounts", "source": "sf-data-model" }
@@ -51,7 +51,8 @@
         "headline": "The whole path from quote to service, on one platform.",
         "points": [
           { "label": "Revenue Cloud unifies pricing, quoting, contracting and billing on a single data model", "source": "sf-revenue-cloud" },
-          { "label": "Field Service: scheduling, dispatch and a technician mobile app", "source": "sf-field-service" },
+          { "label": "Field Service: scheduling, dispatch and a technician mobile app", "source": "sf-field-service", "only": "field" },
+          { "label": "Service Cloud: cases with SLAs and routing, on the same platform as sales and billing", "source": "sf-service-pricing", "only": "office" },
           { "label": "Agentforce Voice (GA) and Service Cloud Voice: calls, transcripts and AI summaries on the case", "source": "sf-agentforce-voice" },
           { "label": "A multi-location home services company has Agentforce handling 100% of its after-hours calls", "source": "story-home-services", "stat": { "value": 100, "suffix": "%" } }
         ],
@@ -61,7 +62,7 @@
         "headline": "HubSpot falls short.",
         "points": [
           { "label": "Strongest at the front of the funnel", "source": "positioning" },
-          { "label": "Doesn't offer native field service; dispatch requires marketplace apps", "source": "hs-catalog-products", "guardrail": "Absence claim. Don't claim HubSpot has no billing: Revenue Hub exists." },
+          { "label": "Doesn't offer native field service; dispatch requires marketplace apps", "source": "hs-catalog-products", "only": "field", "guardrail": "Absence claim. Don't claim HubSpot has no billing: Revenue Hub exists." },
           { "label": "Customer Agent voice channel is in beta", "source": "hs-kb-credits", "guardrail": "Recheck beta status before every publish." }
         ]
       },

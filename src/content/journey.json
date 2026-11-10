@@ -11,6 +11,68 @@
     "proserv": "A prospective client calls after hours to start an intake.",
     "logistics": "A shipper calls after hours about a delayed load."
   },
+  "byIndustry": {
+    "waste": {
+      "2": { "title": "Customer, site and container history found", "salesforce": { "text": "The customer, the service site and the container history, on one record." } },
+      "4": { "title": "Truck and driver dispatched", "salesforce": { "text": "Scheduling and dispatch send the right truck to the missed pickup." } },
+      "5": { "title": "Pickup completed and confirmed", "salesforce": { "text": "The driver closes the work order on mobile, with notes and photos." } },
+      "8": { "salesforce": { "text": "The pickup rolls up across brands and locations to the parent account." } }
+    },
+    "water": {
+      "2": { "title": "Facility, assets and history found", "salesforce": { "text": "The facility, its treatment assets and the full service history, on one record." } },
+      "4": { "title": "Technician dispatched to the site", "salesforce": { "text": "Scheduling and dispatch pick the right technician for the asset and the site." } }
+    },
+    "facilities": {
+      "2": { "title": "Client, site and SLA found", "salesforce": { "text": "The client, the site, its SLA and the full service history, on one record." } },
+      "4": { "title": "Crew dispatched to the client site", "salesforce": { "text": "Scheduling and dispatch pick the right technician for the site." } },
+      "8": { "title": "Rolled up to the client account", "salesforce": { "text": "The job rolls up across every site to the client that pays." } }
+    },
+    "construction": {
+      "2": { "title": "Homeowner, home and project found", "salesforce": { "text": "The homeowner, the home, the original project and its warranty, on one record." } },
+      "3": { "title": "Warranty case and work order created" },
+      "4": { "title": "Warranty technician scheduled", "salesforce": { "text": "Scheduling and dispatch pick the right warranty technician." } },
+      "5": { "title": "Warranty repair completed", "salesforce": { "text": "The technician closes the work order on mobile, with notes and photos." } },
+      "8": { "salesforce": { "text": "The warranty work rolls up across divisions and communities to the parent account." } }
+    },
+    "staffing": {
+      "2": { "title": "Client, job order and history found", "salesforce": { "text": "The client, its open job orders and placement history, on one record." } },
+      "3": { "title": "Replacement request logged", "salesforce": { "text": "A case with SLA and routing, created from the conversation." } },
+      "4": { "title": "Candidates matched to the job order",
+        "salesforce": { "product": "Salesforce Platform", "text": "Job orders, candidates and placements are custom objects, so recruiters match on one platform.", "source": "sf-data-model" },
+        "hubspot": { "status": "app", "system": "Applicant tracking system", "text": "Ask whether candidates live in HubSpot or a separate applicant tracking system, and who keeps them in sync.", "source": "positioning" } },
+      "5": { "title": "Shifts filled and confirmed",
+        "salesforce": { "product": "Salesforce Platform", "text": "Placements are confirmed on the job order, and the client is updated from the same record.", "source": "sf-data-model" },
+        "hubspot": { "status": "app", "system": "Applicant tracking system", "text": "Placements are confirmed wherever the candidates live.", "source": "positioning" } },
+      "6": { "title": "Bill rates and contract for the placements", "salesforce": { "text": "Pricing, quoting and contracting on the same data model as the placement." } },
+      "7": { "title": "Timesheets billed and the ERP updated" },
+      "8": { "salesforce": { "text": "The placement rolls up across brands and branches to the parent account." } }
+    },
+    "proserv": {
+      "2": { "title": "Prospect and existing matters found", "salesforce": { "text": "The prospective client, related parties and existing matters, on one record." } },
+      "3": { "title": "Intake case created", "salesforce": { "text": "An intake case with SLA and routing, created from the conversation." } },
+      "4": { "title": "Matter opened with restricted access",
+        "salesforce": { "product": "Salesforce Platform", "text": "The matter is a custom object, with field-level security so only cleared staff see it.", "source": "sf-data-model" },
+        "hubspot": { "status": "limit", "system": "HubSpot", "text": "Custom objects and field-level permissions are top tier only.", "source": "hs-catalog-products" } },
+      "5": { "title": "Engagement routed to the right team",
+        "salesforce": { "product": "Service Cloud", "text": "Routing sends the engagement to the right practice and team.", "source": "sf-service-pricing" },
+        "hubspot": { "status": "native", "system": "HubSpot", "text": "Ticket routing is native in Service Hub.", "source": "hs-pricing-service" } },
+      "6": { "title": "Engagement letter and SOW", "salesforce": { "text": "Pricing, quoting and contracting on the same data model as the matter." } },
+      "7": { "title": "Time billed and the ERP updated" },
+      "8": { "title": "Rolled up to the client account", "salesforce": { "text": "The matter rolls up across practices and offices to the parent client." } }
+    },
+    "logistics": {
+      "2": { "title": "Shipper, load and history found", "salesforce": { "text": "The shipper, the load and the full service history, on one record." } },
+      "3": { "title": "Case created and tied to the load", "salesforce": { "text": "A case with SLA and routing, linked to the load it's about." } },
+      "4": { "title": "Live load status pulled in",
+        "salesforce": { "product": "MuleSoft", "text": "MuleSoft connects the transportation management system, so the case shows live load status.", "source": "sf-mulesoft" },
+        "hubspot": { "status": "integration", "system": "TMS integration (custom or partner)", "text": "Ask how load status reaches the ticket, and who builds and owns that integration.", "source": "positioning" } },
+      "5": { "title": "Shipper updated from the case",
+        "salesforce": { "product": "Service Cloud", "text": "Status updates go to the shipper from the same case.", "source": "sf-service-pricing" },
+        "hubspot": { "status": "native", "system": "HubSpot", "text": "Ticket replies to the customer are native in Service Hub.", "source": "hs-pricing-service" } },
+      "6": { "title": "Quote for the rebooked load", "salesforce": { "text": "Pricing, quoting and contracting on the same data model as the load." } },
+      "8": { "salesforce": { "text": "The load rolls up across brands and locations to the parent account." } }
+    }
+  },
   "steps": [
     { "n": 1, "title": "The call is answered",
       "salesforce": { "product": "Agentforce Voice", "text": "An AI voice agent answers, understands the request and authenticates the caller.", "source": "sf-agentforce-voice" },

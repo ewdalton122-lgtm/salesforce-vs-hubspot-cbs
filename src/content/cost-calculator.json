@@ -33,6 +33,7 @@
   ],
   "hiddenCosts": {
     "title": "Costs that often don't show up in a HubSpot quote",
-    "items": ["Required onboarding fee per hub", "Data Hub for two-way warehouse sync", "API capacity packs ($500/month each)", "AI credit packs once included credits run out", "Third-party field service and dispatch apps", "Implementation partner middleware, often billed monthly", "Time-and-materials implementation with no cap"]
+    "items": ["Required onboarding fee per hub", "Data Hub for two-way warehouse sync", "API capacity packs ($500/month each)", "AI credit packs once included credits run out", "Third-party field service and dispatch apps", "Implementation partner middleware, often billed monthly", "Time-and-materials implementation with no cap"],
+    "fieldOnly": ["Third-party field service and dispatch apps"]
   }
 }

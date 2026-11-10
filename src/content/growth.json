@@ -23,5 +23,10 @@
       "hubspot": [{ "label": "+ Credit packs", "pill": "limit", "source": "hs-kb-credits" }],
       "salesforce": { "label": "Agentforce", "addOn": true, "source": "sf-agentforce-pricing" } }
   ],
+  "officeStages": {
+    "6": { "stage": 6, "title": "Answer every call with AI",
+      "hubspot": [{ "label": "+ Voice agent (beta)", "pill": "limit", "source": "hs-kb-credits" }],
+      "salesforce": { "label": "Agentforce Voice", "addOn": true, "source": "sf-agentforce-voice" } }
+  },
   "closing": "Salesforce adds licenses as you grow too. Every one lands on the same platform, data model and security model."
 }

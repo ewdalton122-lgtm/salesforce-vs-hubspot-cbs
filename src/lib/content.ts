@@ -31,6 +31,7 @@ const PointSchema = z.object({
   source: z.string(),
   guardrail: z.string().optional(),
   stat: z.object({ value: z.number(), suffix: z.string() }).optional(),
+  only: z.enum(['field', 'office']).optional(),
 });
 const CheckSchema = z.object({
   id: z.string(),
@@ -99,7 +100,7 @@ const CostSchema = z.object({
   // Editor-only fields; the production build strips them (src/lib/stripInternal.ts).
   referenceCheck: z.record(z.union([z.string(), z.object({ annual: z.number(), threeYear: z.number() })])).optional(),
   presentationRules: z.array(z.string()).optional(),
-  hiddenCosts: z.object({ title: z.string(), items: z.array(z.string()) }),
+  hiddenCosts: z.object({ title: z.string(), items: z.array(z.string()), fieldOnly: z.array(z.string()).default([]) }),
 });
 
 const SellerSchema = z.object({ name: z.string(), title: z.string(), email: z.string(), phone: z.string(), meetingUrl: z.string() });
@@ -111,7 +112,7 @@ const SimDefaults = z.object({
 const IndustriesSchema = z.object({
   industries: z.array(
     z.object({
-      id: z.string(), label: z.string(), short: z.string(), icon: z.string(), photo: z.string(),
+      id: z.string(), field: z.boolean(), label: z.string(), short: z.string(), icon: z.string(), photo: z.string(),
       skin: z.enum(['home', 'waste', 'water', 'construction', 'office', 'logistics']),
       objects: z.array(z.string()).min(4), fit: z.string(),
       csmDefault: z.enum(['ecre', 'proserv', 'fieldService', 'customerService', 'global']),
@@ -121,37 +122,33 @@ const IndustriesSchema = z.object({
 });
 
 const FrictionKind = z.enum(['gate', 'app', 'addon', 'limit']);
+const Friction = z.object({ label: z.string(), kind: FrictionKind, source: z.string() });
+const ActText = z.object({ scene: z.string(), sfVisual: z.string(), hsVisual: z.string(), verdict: z.string() });
 const StorySchema = z.object({
   dayOne: z.object({ kicker: z.string(), title: z.string(), body: z.string(), verdict: z.string() }),
-  acts: z.array(
-    z.object({
-      checkId: z.string(), scene: z.string(), sfVisual: z.string(), hsVisual: z.string(), verdict: z.string(),
-      frictions: z.array(z.object({ label: z.string(), kind: FrictionKind, source: z.string() })),
-    }),
-  ).length(5),
+  acts: z.array(ActText.extend({ checkId: z.string(), frictions: z.array(Friction) })).length(5),
+  byIndustry: z.record(z.object({ finaleBody: z.string().optional(), acts: z.record(ActText.partial()) })).default({}),
+  officeFrictions: z.record(z.array(Friction)).default({}),
   finale: z.object({ kicker: z.string(), title: z.string(), body: z.string(), verdict: z.string() }),
   kindLabels: z.record(FrictionKind, z.string()),
 });
 
+const JourneySf = z.object({ product: z.string(), text: z.string(), source: z.string() });
+const JourneyHs = z.object({ status: z.enum(['native', 'beta', 'app', 'integration', 'limit']), system: z.string(), text: z.string(), source: z.string() });
 const JourneySchema = z.object({
   scenarios: z.record(z.string()),
-  steps: z.array(
-    z.object({
-      n: z.number(), title: z.string(),
-      salesforce: z.object({ product: z.string(), text: z.string(), source: z.string() }),
-      hubspot: z.object({ status: z.enum(['native', 'beta', 'app', 'integration', 'limit']), system: z.string(), text: z.string(), source: z.string() }),
-    }),
-  ),
+  byIndustry: z.record(z.record(z.object({ title: z.string().optional(), salesforce: JourneySf.partial().optional(), hubspot: JourneyHs.partial().optional() }))).default({}),
+  steps: z.array(z.object({ n: z.number(), title: z.string(), salesforce: JourneySf, hubspot: JourneyHs })),
 });
 
+const GrowthStage = z.object({
+  stage: z.number(), title: z.string(),
+  hubspot: z.array(z.object({ label: z.string(), pill: z.string().nullable(), source: z.string() })),
+  salesforce: z.object({ label: z.string(), addOn: z.boolean(), source: z.string() }),
+});
 const GrowthSchema = z.object({
-  stages: z.array(
-    z.object({
-      stage: z.number(), title: z.string(),
-      hubspot: z.array(z.object({ label: z.string(), pill: z.string().nullable(), source: z.string() })),
-      salesforce: z.object({ label: z.string(), addOn: z.boolean(), source: z.string() }),
-    }),
-  ),
+  stages: z.array(GrowthStage),
+  officeStages: z.record(GrowthStage).default({}),
   closing: z.string(),
 });
 
@@ -224,3 +221,38 @@ export const checkById = (id: string) => {
 };
 
 export const industryById = (id: string) => industries.find((i) => i.id === id) ?? industries[0];
+
+type Ind = Pick<Industry, 'id' | 'field'>;
+
+/** Story acts in the selected industry's words. Office businesses drop the field-service frictions. */
+export function storyFor(ind: Ind) {
+  const o = story.byIndustry[ind.id];
+  const acts = story.acts.map((a) => ({
+    ...a,
+    ...o?.acts[a.checkId],
+    frictions: (!ind.field && story.officeFrictions[a.checkId]) || a.frictions,
+  }));
+  return { acts, finaleBody: o?.finaleBody ?? story.finale.body };
+}
+
+export function journeyStepsFor(ind: Ind) {
+  const o = journey.byIndustry[ind.id] ?? {};
+  return journey.steps.map((s) => {
+    const v = o[String(s.n)];
+    if (!v) return s;
+    return { ...s, title: v.title ?? s.title, salesforce: { ...s.salesforce, ...v.salesforce }, hubspot: { ...s.hubspot, ...v.hubspot } };
+  });
+}
+
+export function growthStagesFor(ind: Ind) {
+  return ind.field ? growth.stages : growth.stages.map((s) => growth.officeStages[String(s.stage)] ?? s);
+}
+
+/** "Projects, Work orders, SOWs" -> "projects, work orders, SOWs": acronyms keep their capitals. */
+export const objectList = (objects: string[]) => objects.map((o) => (/^[A-Z]{2,}/.test(o) ? o : o[0].toLowerCase() + o.slice(1))).join(', ');
+
+export const fillObjects = (text: string, ind: Pick<Industry, 'objects'>) => text.replace('{objects}', objectList(ind.objects));
+
+export function pointsFor<P extends { label: string; only?: 'field' | 'office' }>(points: P[], ind: Ind & Pick<Industry, 'objects'>) {
+  return points.filter((p) => !p.only || p.only === (ind.field ? 'field' : 'office')).map((p) => ({ ...p, label: fillObjects(p.label, ind) }));
+}

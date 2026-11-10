@@ -71,6 +71,110 @@
     "body": "One connected platform that grew with every brand, crew and call, or a scatter of hubs, tiers and separate apps.",
     "verdict": "Easy to start is good. Built to scale is better."
   },
+  "byIndustry": {
+    "waste": {
+      "finaleBody": "One connected platform that grew with every hauler, route and call, or a scatter of hubs, tiers and separate apps.",
+      "acts": {
+        "data-model": { "scene": "You acquire two haulers. Their routes, containers and municipal contracts need one home." },
+        "cost": { "scene": "You add a commercial service team, a roll-off line and thousands more customer contacts." },
+        "operations": {
+          "scene": "After hours, a commercial customer reports a missed pickup. A truck has to roll.",
+          "sfVisual": "Call to invoice on one conveyor: the call is answered, the work order is created, the truck is dispatched, the pickup is billed."
+        },
+        "governance": { "scene": "Every acquired hauler and every municipal contract team needs its own access." },
+        "ai-data": { "scene": "You turn on AI agents for pickup changes. They need route, container and billing data, and guardrails." }
+      }
+    },
+    "water": {
+      "finaleBody": "One connected platform that grew with every site, asset and call, or a scatter of hubs, tiers and separate apps.",
+      "acts": {
+        "data-model": { "scene": "You add service territories. Assets, sites and service contracts need to connect." },
+        "cost": { "scene": "You add a service-contract team, a new treatment line and more facility contacts." },
+        "operations": { "scene": "After hours, a treatment system alarms. A technician has to roll." },
+        "governance": { "scene": "More sites, more contract teams, and treatment data only the right people should see." },
+        "ai-data": { "scene": "You turn on AI agents for service requests. They need asset history and treatment data, and guardrails." }
+      }
+    },
+    "facilities": {
+      "finaleBody": "One connected platform that grew with every client, site and crew, or a scatter of hubs, tiers and separate apps.",
+      "acts": {
+        "data-model": { "scene": "You win a national client. Hundreds of sites need to roll up to the client that pays." },
+        "cost": { "scene": "You add an SLA desk, a new service line and every site contact." },
+        "operations": { "scene": "After hours, an HVAC unit fails at a client site. A crew has to roll." },
+        "governance": { "scene": "Clients, subcontractors and your own crews each need different access." },
+        "ai-data": { "scene": "You turn on AI agents for service requests. They need SLA, asset and site data, and guardrails." }
+      }
+    },
+    "home": {
+      "acts": {
+        "data-model": { "scene": "You buy two local brands. Households, equipment and memberships need one model." },
+        "cost": { "scene": "You add a call center, a second trade and thousands more homeowner contacts." },
+        "operations": { "scene": "9 p.m. A homeowner has no heat. A technician has to roll." },
+        "governance": { "scene": "Every brand, every branch and every call-center agent needs different access." },
+        "ai-data": { "scene": "You turn on AI agents to book jobs. They need equipment, membership and pricing data, and guardrails." }
+      }
+    },
+    "construction": {
+      "finaleBody": "One connected platform that grew with every division, project and warranty call, or a scatter of hubs, tiers and separate apps.",
+      "acts": {
+        "data-model": { "scene": "You open a new market. Pursuits, projects and change orders need to connect." },
+        "cost": { "scene": "You add a warranty team, a new division and every homebuyer contact." },
+        "operations": { "scene": "After hours, a new homeowner reports a warranty issue. A crew has to roll." },
+        "governance": { "scene": "Divisions, project teams and subcontractors each need different access." },
+        "ai-data": { "scene": "You turn on AI agents for warranty requests. They need project and job-cost data from the ERP, and guardrails." }
+      }
+    },
+    "staffing": {
+      "finaleBody": "One connected platform that grew with every brand, recruiter and placement, or a scatter of hubs, tiers and separate systems.",
+      "acts": {
+        "data-model": { "scene": "You acquire a niche agency. Job orders, candidates and placements need one model." },
+        "cost": { "scene": "You add an account management team, a new staffing division and thousands more candidates." },
+        "operations": {
+          "scene": "After hours, a client needs three replacement workers by morning. The shifts have to be filled.",
+          "sfVisual": "Order to invoice on one platform: the call is answered, the job order is found, candidates are matched, the placement is billed.",
+          "hsVisual": "Candidates and placements need top-tier custom objects or a separate applicant tracking system, and the voice agent is in beta.",
+          "verdict": "Salesforce runs the whole placement, from first call to final invoice."
+        },
+        "governance": { "scene": "Recruiters, account managers and every client team need different access to candidate data." },
+        "ai-data": { "scene": "You turn on AI agents to screen and match candidates. They need job, candidate and timesheet data, and guardrails." }
+      }
+    },
+    "proserv": {
+      "finaleBody": "One connected platform that grew with every practice, matter and client, or a scatter of hubs, tiers and separate systems.",
+      "acts": {
+        "data-model": { "scene": "You add a practice. Matters, engagements and SOWs need to connect." },
+        "cost": { "scene": "You add a client service team, a new practice area and more client contacts." },
+        "operations": {
+          "scene": "After hours, a prospective client calls to start an intake. A matter has to open.",
+          "sfVisual": "Intake to invoice on one platform: the call is answered, the intake is captured, the matter opens with restricted access, the engagement is billed.",
+          "hsVisual": "Matters need custom objects and field-level permissions, both top tier only, and the voice agent is in beta.",
+          "verdict": "Salesforce runs the whole matter, from first call to final invoice."
+        },
+        "governance": { "scene": "Conflicts and confidentiality mean every practice and every matter needs its own access." },
+        "ai-data": { "scene": "You turn on AI agents for intake. They need client, matter and billing data, and strict guardrails." }
+      }
+    },
+    "logistics": {
+      "finaleBody": "One connected platform that grew with every shipper, lane and load, or a scatter of hubs, tiers and separate systems.",
+      "acts": {
+        "data-model": { "scene": "You acquire a regional carrier. Shippers, lanes and loads need one model." },
+        "cost": { "scene": "You add a customer service desk, a new freight line and thousands more shipper contacts." },
+        "operations": {
+          "scene": "After hours, a shipper calls about a delayed load. The issue has to be resolved, fast.",
+          "sfVisual": "Call to invoice on one platform: the call is answered, the case is tied to the load, the shipper is updated, the account is billed.",
+          "hsVisual": "Loads and lanes need custom objects, top tier only, and the voice agent is in beta.",
+          "verdict": "Salesforce runs every shipment issue, from first call to final invoice."
+        },
+        "governance": { "scene": "Brokerage, carrier and customer service teams each need different access." },
+        "ai-data": { "scene": "You turn on AI agents for shipment status. They need load, lane and billing data, and guardrails." }
+      }
+    }
+  },
+  "officeFrictions": {
+    "operations": [
+      { "label": "Voice agent in beta", "kind": "limit", "source": "hs-kb-credits" }
+    ]
+  },
   "kindLabels": {
     "gate": "Top-tier gates",
     "app": "Separate apps",

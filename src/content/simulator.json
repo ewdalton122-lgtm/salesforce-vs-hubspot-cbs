@@ -114,7 +114,7 @@
         "source": "hs-catalog-limits"
       },
       "salesforce": {
-        "text": "MuleSoft and Informatica connect the ERP, billing and dispatch systems.",
+        "text": "MuleSoft and Informatica connect the ERP, billing and operations systems.",
         "source": "sf-mulesoft"
       },
       "short": "Two-way ERP sync",

@@ -1,24 +1,42 @@
-import { Fragment, useEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useInView, useReducedMotion } from 'framer-motion';
 import { Pause, Phone, Play, Repeat, Zap } from 'lucide-react';
-import { journey } from '../lib/content';
+import { journey, journeyStepsFor } from '../lib/content';
 import { computeHandoffs, computeSystems, tallyUpTo } from '../lib/journey';
 import { useApp } from '../context/AppContext';
 import { Footnote, HsPill } from '../components/ui';
 
 const STEP_MS = 2200;
 const END_HOLD_MS = 4200;
-const steps = journey.steps;
-const last = steps.length - 1;
-const allSystems = computeSystems(steps);
-const totalHandoffs = computeHandoffs(steps);
 // Neutral grays only: HubSpot never gets brand color.
 const SYSTEM_SHADES = ['#c1c7d2', '#7f8799', '#555c6c', '#9ea6b5'];
-const shade = (system: string) => SYSTEM_SHADES[allSystems.indexOf(system) % SYSTEM_SHADES.length];
-const isHandoff = (i: number) => i > 0 && steps[i].hubspot.system !== steps[i - 1].hubspot.system;
+
+type Steps = ReturnType<typeof journeyStepsFor>;
+type Path = {
+  steps: Steps;
+  last: number;
+  allSystems: string[];
+  totalHandoffs: number;
+  shade: (system: string) => string;
+  isHandoff: (i: number) => boolean;
+};
+
+function makePath(steps: Steps): Path {
+  const allSystems = computeSystems(steps);
+  return {
+    steps,
+    last: steps.length - 1,
+    allSystems,
+    totalHandoffs: computeHandoffs(steps),
+    shade: (system) => SYSTEM_SHADES[allSystems.indexOf(system) % SYSTEM_SHADES.length],
+    isHandoff: (i) => i > 0 && steps[i].hubspot.system !== steps[i - 1].hubspot.system,
+  };
+}
 
 export default function FollowTheCall() {
   const { industry } = useApp();
+  const path = useMemo(() => makePath(journeyStepsFor(industry)), [industry]);
+  const { steps, last, shade, isHandoff } = path;
   const reduce = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { amount: 0.15 });
@@ -31,12 +49,14 @@ export default function FollowTheCall() {
     const wait = step < 0 ? 400 : step >= last ? END_HOLD_MS : STEP_MS;
     const t = setTimeout(() => setStep((s) => (s >= last ? 0 : s + 1)), wait);
     return () => clearTimeout(t);
-  }, [running, step]);
+  }, [running, step, last]);
+
+  useEffect(() => setStep(reduce ? last : -1), [path, reduce, last]);
 
   const tally = step >= 0 ? tallyUpTo(steps, step) : { systems: 0, handoffs: 0 };
   const scenario = (journey.scenarios as Record<string, string>)[industry.id] ?? journey.scenarios.all;
   const done = step >= last;
-  const controls = { running, paused, reduce: !!reduce, toggle: () => setPaused((p) => !p) };
+  const controls = { path, running, paused, reduce: !!reduce, toggle: () => setPaused((p) => !p) };
 
   return (
     <div ref={ref} className="glass-strong mx-auto mt-10 max-w-[1180px] p-6 sm:p-8">
@@ -108,7 +128,7 @@ export default function FollowTheCall() {
   );
 }
 
-type Controls = { running: boolean; paused: boolean; reduce: boolean; toggle: () => void };
+type Controls = { path: Path; running: boolean; paused: boolean; reduce: boolean; toggle: () => void };
 type Tally = { systems: number; handoffs: number };
 
 function PlayToggle({ paused, reduce, toggle, small = false }: Controls & { small?: boolean }) {
@@ -134,7 +154,8 @@ function Num({ value, sf = false, size = 'lg' }: { value: number; sf?: boolean; 
 }
 
 /** One cell per step. Salesforce is one continuous line; HubSpot breaks wherever the system changes. */
-function PathTrack({ step, sf }: { step: number; sf: boolean }) {
+function PathTrack({ path, step, sf }: { path: Path; step: number; sf: boolean }) {
+  const { steps, isHandoff, shade } = path;
   if (sf)
     return (
       <div className="h-3 overflow-hidden rounded-full bg-white/10" aria-hidden>
@@ -166,6 +187,7 @@ function PathTrack({ step, sf }: { step: number; sf: boolean }) {
 }
 
 function Scoreboard({ step, tally, done, ...c }: Controls & { step: number; tally: Tally; done: boolean }) {
+  const { steps, shade, allSystems, totalHandoffs } = c.path;
   const seen = step >= 0 ? computeSystems(steps.slice(0, step + 1)) : [];
   return (
     <aside className="hidden lg:sticky lg:top-[calc(var(--banner-h)+76px)] lg:block" aria-label="Live tally">
@@ -202,7 +224,7 @@ function Scoreboard({ step, tally, done, ...c }: Controls & { step: number; tall
             </div>
           </div>
           <div className="mt-3">
-            <PathTrack step={step} sf />
+            <PathTrack path={c.path} step={step} sf />
           </div>
           <p className="mt-2 text-[12.5px] text-white/80">One platform, end to end.</p>
         </div>
@@ -220,7 +242,7 @@ function Scoreboard({ step, tally, done, ...c }: Controls & { step: number; tall
             </div>
           </div>
           <div className="mt-3">
-            <PathTrack step={step} sf={false} />
+            <PathTrack path={c.path} step={step} sf={false} />
           </div>
           <ul className="mt-3 space-y-1.5">
             <AnimatePresence initial={false}>
@@ -258,6 +280,7 @@ function Scoreboard({ step, tally, done, ...c }: Controls & { step: number; tall
 }
 
 function MobileTally({ step, tally, ...c }: Controls & { step: number; tally: Tally }) {
+  const { steps } = c.path;
   return (
     <div className="sticky top-[calc(var(--banner-h)+60px)] z-10 mt-6 lg:hidden">
       <div className="rounded-2xl bg-[#061633]/95 px-3.5 py-3 ring-1 ring-sf-cloud/30 shadow-[0_16px_40px_rgba(0,0,0,.4)] backdrop-blur">
@@ -278,7 +301,7 @@ function MobileTally({ step, tally, ...c }: Controls & { step: number; tally: Ta
               </span>
             </div>
             <div className="mt-1">
-              <PathTrack step={step} sf />
+              <PathTrack path={c.path} step={step} sf />
             </div>
           </div>
           <div>
@@ -290,7 +313,7 @@ function MobileTally({ step, tally, ...c }: Controls & { step: number; tally: Ta
               </span>
             </div>
             <div className="mt-1">
-              <PathTrack step={step} sf={false} />
+              <PathTrack path={c.path} step={step} sf={false} />
             </div>
           </div>
         </div>

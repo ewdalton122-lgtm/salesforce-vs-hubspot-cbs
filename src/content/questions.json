@@ -16,8 +16,8 @@
     { "id": "ai-data", "topic": "AI & data foundation", "askHubSpot": "Can your AI use our data from outside the CRM, and can you show tracing, testing and rollback when an agent gets something wrong?", "salesforce": "Yes. Data 360 with Zero Copy, Testing Center, agent versions with rollback, and the Einstein Trust Layer." }
   ],
   "moreQuestions": [
-    { "topic": "Integration", "askHubSpot": "Can you show a live two-way sync with our ERP, billing and dispatch systems? Is it native or custom, and who builds, monitors and fixes it?" },
-    { "topic": "Permissions", "askHubSpot": "How do we give sales, service, dispatch, finance and executives different access, and which tier does that require?" },
+    { "topic": "Integration", "askHubSpot": "Can you show a live two-way sync with our ERP, billing and scheduling systems? Is it native or custom, and who builds, monitors and fixes it?" },
+    { "topic": "Permissions", "askHubSpot": "How do we give sales, service, operations, finance and executives different access, and which tier does that require?" },
     { "topic": "AI credits", "askHubSpot": "What happens when AI credits run out mid-month? Which agents are still in beta, and which beta features will start consuming credits?" },
     { "topic": "Contact center", "askHubSpot": "Is your voice agent generally available? How do calls, transcripts and AI summaries land on the customer record?" },
     { "topic": "Pricing stability", "askHubSpot": "If your pricing model is changing, what does our pricing look like in year two and at renewal?" }

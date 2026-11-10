@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowRight, ArrowUpRight, Check, ChevronsRight, Info, Layers, Play, RotateCcw, Scale, TrendingUp, X } from 'lucide-react';
-import { cost, growth } from '../lib/content';
+import { ArrowRight, ArrowUpRight, Check, ChevronsRight, EyeOff, Info, Layers, MessageSquareQuote, Play, RotateCcw, Scale, SlidersHorizontal, TrendingUp, X } from 'lucide-react';
+import { checkById, cost, growth, growthStagesFor } from '../lib/content';
+import { useApp } from '../context/AppContext';
 import { computeAll, tierJump, usd, type CalcInputs, type CalcResult } from '../lib/calc';
 import { growthCounts } from '../lib/growth';
 import { Footnote, HsPill } from '../components/ui';
@@ -13,8 +14,10 @@ const DISCLAIMER =
 const THUMB = 56;
 const at = (f: number) => `calc(${THUMB / 2}px + (100% - ${THUMB}px) * ${f})`;
 
-function GrowthSlider({ stage, setStage }: { stage: number; setStage: (n: number) => void }) {
-  const n = growth.stages.length;
+type Stages = ReturnType<typeof growthStagesFor>;
+
+function GrowthSlider({ stages, stage, setStage }: { stages: Stages; stage: number; setStage: (n: number) => void }) {
+  const n = stages.length;
   const [touched, setTouched] = useState(false);
   const [playing, setPlaying] = useState(false);
   const timer = useRef<number>();
@@ -56,7 +59,7 @@ function GrowthSlider({ stage, setStage }: { stage: number; setStage: (n: number
         <div className="absolute top-1/2 h-4 -translate-y-1/2 rounded-full bg-white/10 ring-1 ring-white/10" style={{ left: THUMB / 2, right: THUMB / 2 }}>
           <div className="grow-fill absolute inset-y-0 left-0 rounded-full transition-[width] duration-300 ease-out" style={{ width: `${f * 100}%` }} />
         </div>
-        {growth.stages.map((s, i) => (
+        {stages.map((s, i) => (
           <span
             key={s.stage}
             aria-hidden
@@ -74,7 +77,7 @@ function GrowthSlider({ stage, setStage }: { stage: number; setStage: (n: number
           value={stage}
           onChange={(e) => choose(Number(e.target.value))}
           aria-label="Growth stage"
-          aria-valuetext={`Stage ${stage} of ${n}: ${growth.stages[stage - 1].title}`}
+          aria-valuetext={`Stage ${stage} of ${n}: ${stages[stage - 1].title}`}
         />
         <div className="grow-thumb-wrap pointer-events-none absolute top-1/2 -translate-x-1/2 -translate-y-1/2 transition-[left] duration-300 ease-out" style={{ left: at(f) }}>
           <div className={`grow-thumb grid place-items-center rounded-full text-sf-blue ${touched ? '' : 'grow-pulse'}`} style={{ width: THUMB, height: THUMB }}>
@@ -89,7 +92,7 @@ function GrowthSlider({ stage, setStage }: { stage: number; setStage: (n: number
       </div>
 
       <div className="relative mt-1 hidden h-[44px] md:block">
-        {growth.stages.map((s, i) => {
+        {stages.map((s, i) => {
           const edge = i === 0 ? 'translate-x-0 text-left' : i === n - 1 ? '-translate-x-full text-right' : '-translate-x-1/2 text-center';
           const pos = i === 0 ? '0px' : i === n - 1 ? '100%' : at(i / (n - 1));
           return (
@@ -113,8 +116,10 @@ function GrowthSlider({ stage, setStage }: { stage: number; setStage: (n: number
 }
 
 function GrowthStack() {
+  const { industry } = useApp();
+  const stages = useMemo(() => growthStagesFor(industry), [industry]);
   const [stage, setStage] = useState(1);
-  const counts = growthCounts(growth.stages, stage);
+  const counts = growthCounts(stages, stage);
   return (
     <div className="glass-strong p-6 sm:p-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
@@ -124,12 +129,12 @@ function GrowthStack() {
         </div>
         <p className="flex items-center gap-3 text-[16px] text-night-dim">
           <span className="rounded-full bg-sf-electric/25 px-3 py-1 text-[13px] font-extrabold uppercase tracking-[0.14em] text-sf-sky ring-1 ring-sf-cloud/40">
-            Stage {stage} of {growth.stages.length}
+            Stage {stage} of {stages.length}
           </span>
-          <strong className="text-white">{growth.stages[stage - 1].title}</strong>
+          <strong className="text-white">{stages[stage - 1].title}</strong>
         </p>
       </div>
-      <GrowthSlider stage={stage} setStage={setStage} />
+      <GrowthSlider stages={stages} stage={stage} setStage={setStage} />
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <div>
@@ -139,7 +144,7 @@ function GrowthStack() {
           <div className="mt-3 rounded-2xl bg-gradient-to-b from-sf-electric/30 to-sf-deep/40 p-3 ring-1 ring-sf-cloud/40">
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               <AnimatePresence initial={false}>
-                {growth.stages.slice(0, stage).map((s) => (
+                {stages.slice(0, stage).map((s) => (
                   <motion.div
                     key={s.stage}
                     layout
@@ -168,7 +173,7 @@ function GrowthStack() {
           </p>
           <div className="mt-3 flex min-h-[120px] flex-col-reverse gap-1.5 rounded-2xl bg-white/5 p-3 ring-1 ring-white/10">
             <AnimatePresence initial={false}>
-              {growth.stages.slice(0, stage).flatMap((s) =>
+              {stages.slice(0, stage).flatMap((s) =>
                 s.hubspot.map((b, j) => (
                   <motion.div
                     key={`${s.stage}-${j}`}
@@ -258,6 +263,7 @@ function Matchup({ n, kicker, title, sf, hs, verdict, best }: { n: number; kicke
 }
 
 function Calculator() {
+  const { industry } = useApp();
   const [inp, setInp] = useState<CalcInputs>({
     salesSeats: cost.defaults.salesSeats,
     serviceSeats: cost.defaults.serviceSeats,
@@ -330,8 +336,12 @@ function Calculator() {
         </div>
       </div>
 
-      <div className="mt-8 grid gap-8 lg:grid-cols-[360px_1fr]">
-        <form className="space-y-5" onSubmit={(e) => e.preventDefault()} aria-label="Cost scenario">
+      <div className="mt-8 grid gap-6 lg:grid-cols-[360px_1fr] lg:gap-8">
+        <div className="flex flex-col gap-4">
+        <form className="space-y-5 rounded-2xl bg-white/[.04] p-5 ring-1 ring-white/10" onSubmit={(e) => e.preventDefault()} aria-label="Cost scenario">
+          <p className="flex items-center gap-2 text-[12px] font-extrabold uppercase tracking-[0.18em] text-sf-sky">
+            <SlidersHorizontal size={14} aria-hidden /> Your scenario
+          </p>
           {(['salesSeats', 'serviceSeats'] as const).map((k) => {
             const r = cost.inputs[k];
             return (
@@ -390,6 +400,30 @@ function Calculator() {
           </label>
         </form>
 
+        <div className="flex flex-1 flex-col rounded-2xl bg-white/[.04] p-5 ring-1 ring-white/10">
+          <p className="flex items-center gap-2 text-[12px] font-extrabold uppercase tracking-[0.18em] text-[#b9c0cc]">
+            <EyeOff size={14} aria-hidden /> Not in the quote
+          </p>
+          <p className="mt-2 text-[16px] font-extrabold leading-snug">{cost.hiddenCosts.title}</p>
+          <ul className="mt-3 space-y-2.5 text-[14.5px] leading-snug text-[#cfd4de]">
+            {cost.hiddenCosts.items.filter((h) => industry.field || !cost.hiddenCosts.fieldOnly.includes(h)).map((h) => (
+              <li key={h} className="flex gap-2.5">
+                <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#8a93a6]" aria-hidden />
+                {h}
+              </li>
+            ))}
+          </ul>
+          <div className="mt-auto pt-5">
+            <div className="rounded-xl bg-gradient-to-br from-sf-electric/35 to-sf-blue/20 p-4 ring-1 ring-sf-cloud/40">
+              <p className="flex items-center gap-2 text-[12px] font-extrabold uppercase tracking-[0.16em] text-sf-sky">
+                <MessageSquareQuote size={14} aria-hidden /> Ask HubSpot
+              </p>
+              <p className="mt-1.5 text-[14.5px] font-semibold leading-snug text-white">“{checkById('cost').askLive}”</p>
+            </div>
+          </div>
+        </div>
+        </div>
+
         <div>
           <div className="space-y-4" aria-live="polite">
             <Matchup
@@ -445,17 +479,6 @@ function Calculator() {
         </div>
       </div>
 
-      <div className="mt-8 rounded-2xl bg-white/5 p-5 ring-1 ring-white/10">
-        <p className="text-[16px] font-extrabold">{cost.hiddenCosts.title}</p>
-        <ul className="mt-3 grid gap-2 text-[15px] text-[#cfd4de] sm:grid-cols-2">
-          {cost.hiddenCosts.items.map((h) => (
-            <li key={h} className="flex gap-2">
-              <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[#8a93a6]" aria-hidden />
-              {h}
-            </li>
-          ))}
-        </ul>
-      </div>
     </div>
   );
 }

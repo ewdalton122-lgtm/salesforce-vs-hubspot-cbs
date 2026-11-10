@@ -26,10 +26,7 @@
     "title": "Your CRM isn't",
     "titleAccent": "just for sales.",
     "body": "If you run a services business, your CRM has to keep up with acquisitions, crews in the field, phones that never stop ringing, and the ERP that bills it all.",
-    "pick": "Pick your business. The whole story adapts to it.",
-    "pressures": ["Acquisitions", "Field crews", "Contact center", "ERP & billing"],
-    "closing": "Plenty of tools are easy to start.",
-    "closingAccent": "Salesforce is built to scale."
+    "pressures": ["Acquisitions", "Field crews", "Contact center", "ERP & billing"]
   },
   "proof": {
     "kicker": "Proof",

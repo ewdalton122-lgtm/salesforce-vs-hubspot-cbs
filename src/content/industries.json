@@ -1,8 +1,8 @@
 {
-  "_note": "Industry personalization. 'fit' lines are Salesforce positioning (no footnote). simulatorDefaults are illustrative, not research figures. csmDefault picks the default Proof tab; the tab always shows its true cut name and is never relabeled as this industry.",
+  "_note": "Industry personalization. 'field' marks businesses that send technicians or crews to sites; false swaps field-service wording (dispatch, technicians) for the office equivalent across the story, the call and the growth stack. 'fit' lines are Salesforce positioning (no footnote). simulatorDefaults are illustrative, not research figures. csmDefault picks the default Proof tab; the tab always shows its true cut name and is never relabeled as this industry.",
   "industries": [
     {
-      "id": "all", "label": "All services businesses", "short": "All services", "icon": "Building2", "photo": "ops-control-room.jpg", "skin": "home",
+      "id": "all", "field": true, "label": "All services businesses", "short": "All services", "icon": "Building2", "photo": "ops-control-room.jpg", "skin": "home",
       "objects": ["Projects", "Work orders", "Job orders", "Matters", "SOWs"],
       "fit": "Your business runs on projects, work orders, job orders and matters, not deals alone.",
       "csmDefault": "ecre",
@@ -10,7 +10,7 @@
       "simulatorDefaults": { "brands": 4, "locations": 20, "users": 75, "linesOfBusiness": 3, "technicians": 40, "aiConversations": 2000, "erp": true, "dispatch": true, "phone": true, "warehouse": false }
     },
     {
-      "id": "waste", "label": "Waste, recycling & environmental", "short": "Waste & recycling", "icon": "Recycle", "photo": "waste-aerial.jpg", "skin": "waste",
+      "id": "waste", "field": true, "label": "Waste, recycling & environmental", "short": "Waste & recycling", "icon": "Recycle", "photo": "waste-aerial.jpg", "skin": "waste",
       "objects": ["Routes", "Containers", "Service sites", "Municipal contracts", "Work orders"],
       "fit": "Routes, containers and municipal contracts are your real objects, and every acquired hauler has to fit the same model.",
       "csmDefault": "fieldService",
@@ -18,7 +18,7 @@
       "simulatorDefaults": { "brands": 6, "locations": 30, "users": 120, "linesOfBusiness": 4, "technicians": 150, "aiConversations": 4000, "erp": true, "dispatch": true, "phone": true, "warehouse": true }
     },
     {
-      "id": "water", "label": "Water & water treatment", "short": "Water", "icon": "Droplets", "photo": "water-plant.jpg", "skin": "water",
+      "id": "water", "field": true, "label": "Water & water treatment", "short": "Water", "icon": "Droplets", "photo": "water-plant.jpg", "skin": "water",
       "objects": ["Assets", "Sites", "Service contracts", "Work orders", "Inspections"],
       "fit": "Assets, service contracts and technicians across every site, with the treatment data behind them.",
       "csmDefault": "fieldService",
@@ -26,7 +26,7 @@
       "simulatorDefaults": { "brands": 3, "locations": 15, "users": 90, "linesOfBusiness": 3, "technicians": 60, "aiConversations": 1500, "erp": true, "dispatch": true, "phone": true, "warehouse": true }
     },
     {
-      "id": "facilities", "label": "Facilities services", "short": "Facilities", "icon": "Wrench", "photo": "facilities-tech.jpg", "skin": "home",
+      "id": "facilities", "field": true, "label": "Facilities services", "short": "Facilities", "icon": "Wrench", "photo": "facilities-tech.jpg", "skin": "home",
       "objects": ["Multi-site clients", "SLAs", "Work orders", "Subcontractors", "Assets"],
       "fit": "Multi-site clients, SLAs and crews, with every location rolling up to the client that pays.",
       "csmDefault": "fieldService",
@@ -34,7 +34,7 @@
       "simulatorDefaults": { "brands": 4, "locations": 50, "users": 150, "linesOfBusiness": 3, "technicians": 200, "aiConversations": 3000, "erp": true, "dispatch": true, "phone": true, "warehouse": false }
     },
     {
-      "id": "home", "label": "HVAC, plumbing, roofing & home services", "short": "Home services", "icon": "Home", "photo": "hvac-panel.jpg", "skin": "home",
+      "id": "home", "field": true, "label": "HVAC, plumbing, roofing & home services", "short": "Home services", "icon": "Home", "photo": "hvac-panel.jpg", "skin": "home",
       "objects": ["Households", "Equipment", "Memberships", "Work orders", "Quotes"],
       "fit": "Dispatch and invoicing, memberships and repeat visits, and every call answered, even after hours.",
       "csmDefault": "fieldService",
@@ -42,7 +42,7 @@
       "simulatorDefaults": { "brands": 8, "locations": 25, "users": 100, "linesOfBusiness": 3, "technicians": 120, "aiConversations": 5000, "erp": true, "dispatch": true, "phone": true, "warehouse": false }
     },
     {
-      "id": "construction", "label": "Construction, AEC & homebuilders", "short": "Construction & AEC", "icon": "HardHat", "photo": "construction.jpg", "skin": "construction",
+      "id": "construction", "field": true, "label": "Construction, AEC & homebuilders", "short": "Construction & AEC", "icon": "HardHat", "photo": "construction.jpg", "skin": "construction",
       "objects": ["Projects", "Pursuits", "Change orders", "Warranty cases", "Subcontractors"],
       "fit": "Project handoff from pursuit to delivery to warranty, on objects that aren't a standard deal.",
       "csmDefault": "ecre",
@@ -50,7 +50,7 @@
       "simulatorDefaults": { "brands": 3, "locations": 10, "users": 80, "linesOfBusiness": 3, "technicians": 30, "aiConversations": 800, "erp": true, "dispatch": false, "phone": true, "warehouse": true }
     },
     {
-      "id": "staffing", "label": "Staffing & recruiting", "short": "Staffing", "icon": "Users", "photo": "staffing-interview.jpg", "skin": "office",
+      "id": "staffing", "field": false, "label": "Staffing & recruiting", "short": "Staffing", "icon": "Users", "photo": "staffing-interview.jpg", "skin": "office",
       "objects": ["Job orders", "Candidates", "Placements", "Timesheets", "Clients"],
       "fit": "Job orders, candidates and placements, with timesheets and billing behind every one.",
       "csmDefault": "global",
@@ -58,7 +58,7 @@
       "simulatorDefaults": { "brands": 3, "locations": 12, "users": 150, "linesOfBusiness": 2, "technicians": 0, "aiConversations": 3000, "erp": true, "dispatch": false, "phone": true, "warehouse": true }
     },
     {
-      "id": "proserv", "label": "Legal, consulting & professional services", "short": "Legal & professional", "icon": "Briefcase", "photo": "contact-center.jpg", "skin": "office",
+      "id": "proserv", "field": false, "label": "Legal, consulting & professional services", "short": "Legal & professional", "icon": "Briefcase", "photo": "contact-center.jpg", "skin": "office",
       "objects": ["Matters", "Engagements", "SOWs", "Intake", "Time & billing"],
       "fit": "Matters, SOWs and intake, with strict data access for conflicts and confidentiality.",
       "csmDefault": "proserv",
@@ -66,7 +66,7 @@
       "simulatorDefaults": { "brands": 2, "locations": 8, "users": 60, "linesOfBusiness": 3, "technicians": 0, "aiConversations": 1000, "erp": true, "dispatch": false, "phone": true, "warehouse": false }
     },
     {
-      "id": "logistics", "label": "Transportation & logistics", "short": "Logistics", "icon": "Truck", "photo": "field-crew-van.jpg", "skin": "logistics",
+      "id": "logistics", "field": false, "label": "Transportation & logistics", "short": "Logistics", "icon": "Truck", "photo": "field-crew-van.jpg", "skin": "logistics",
       "objects": ["Shippers", "Lanes", "Loads", "Claims", "Carriers"],
       "fit": "Shippers, lanes and loads, with every service issue tied to the account that pays.",
       "csmDefault": "global",
