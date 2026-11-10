@@ -1,10 +1,25 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
+import type { Plugin } from 'vite';
+import { stripInternal } from './src/lib/stripInternal';
+
+/** Removes editor-only notes and guardrails from content JSON in production builds. */
+function stripInternalContent(): Plugin {
+  return {
+    name: 'strip-internal-content',
+    apply: 'build',
+    enforce: 'pre',
+    transform(code, id) {
+      if (!/\/src\/content\/[^/]+\.json$/.test(id)) return null;
+      return { code: JSON.stringify(stripInternal(JSON.parse(code))), map: null };
+    },
+  };
+}
 
 // Relative base so the build works at any GitHub Pages path (e.g. /salesforce-vs-hubspot-cbs/).
 export default defineConfig({
   base: './',
-  plugins: [react()],
+  plugins: [stripInternalContent(), react()],
   build: {
     target: 'es2020',
     chunkSizeWarningLimit: 1400,

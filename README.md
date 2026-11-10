@@ -45,6 +45,7 @@ The 3D code (three.js and react-three-fiber) loads only when the visitor nears t
 2. Every claim names a source id. Add or update it in `sources.json` (kit sources) or `sources.supplemental.json` (sources this build added), with an `asOf` month.
 3. Run `npm test`. The tests fail if a source id doesn't resolve, an internal or anonymized source has a public link, the check order or the video asks drift from v4, a CSM value changes, or banned phrasing appears ("can't", "cheaper", "nothing rolls up", "no billing", "no business units", relative dates, customer names, HubSpot orange or files, trackers, Google Fonts).
 4. Footnote numbers are assigned automatically in page order.
+5. Editor-only fields (`_note`, `guardrail`, `presentationRules`, `distribution`, `citation`, `referenceCheck` and similar) stay in the JSON for editors, but the production build strips them (`src/lib/stripInternal.ts`) so they never reach the browser. `npm run check:bundle` fails the deploy if any of that guidance shows up in `dist/`.
 
 Edition names and seat prices live only in `cost-calculator.json`, and render only in the cost act's calculator.
 
@@ -87,7 +88,7 @@ The scripts use `puppeteer-core` (global install) with a local Chrome. Managed C
 
 ## Deploy
 
-`.github/workflows/deploy.yml` builds, tests and publishes `dist/` to GitHub Pages on every push to `main`. When a repo exists: push, then in Settings → Pages choose "GitHub Actions" as the source. The build uses a relative base, so it works at any Pages path.
+`.github/workflows/deploy.yml` tests, builds, runs the bundle check and publishes `dist/` to GitHub Pages on every push to `main`. The build uses a relative base, so it works at any Pages path. The social preview image in `index.html` points at the live URL; update it if the repo name changes.
 
 ## Confidentiality
 

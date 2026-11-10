@@ -49,7 +49,7 @@ const ProofSchema = z.object({
     global: z.array(MetricTuple),
     industries: z.array(z.object({ industry: z.string(), citationCustomers: z.number(), guardrail: z.string().optional(), metrics: z.array(MetricTuple) })),
     personas: z.array(z.object({ persona: z.string(), label: z.string(), guardrail: z.string().optional(), metrics: z.array(MetricTuple) })),
-    citation: z.string(),
+    citation: z.string().optional(),
   }),
   stories: z.array(
     z.object({
@@ -95,8 +95,9 @@ const CostSchema = z.object({
       addons: z.record(z.object({ monthly: z.number().optional(), perSeatMonthly: z.number().optional() })).optional(),
     }),
   ),
-  referenceCheck: z.record(z.union([z.string(), z.object({ annual: z.number(), threeYear: z.number() })])),
-  presentationRules: z.array(z.string()),
+  // Editor-only fields; the production build strips them (src/lib/stripInternal.ts).
+  referenceCheck: z.record(z.union([z.string(), z.object({ annual: z.number(), threeYear: z.number() })])).optional(),
+  presentationRules: z.array(z.string()).optional(),
   hiddenCosts: z.object({ title: z.string(), items: z.array(z.string()) }),
 });
 

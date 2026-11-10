@@ -120,3 +120,19 @@ describe('brand guardrails', () => {
     expect(hits).toEqual([]);
   });
 });
+
+describe('production build strips editor-only content', () => {
+  it('removes notes, guardrails and rules, and keeps what the page renders', async () => {
+    const { stripInternal } = await import('../src/lib/stripInternal');
+    const raw = JSON.stringify(
+      ['checks', 'cost-calculator', 'proof', 'questions', 'sources', 'story', 'simulator', 'industries'].map((f) =>
+        stripInternal(JSON.parse(readFileSync(`src/content/${f}.json`, 'utf8'))),
+      ),
+    );
+    for (const bad of ['"_note"', '"guardrail"', '"presentationRules"', '"distribution"', '#marketinglegal', "Don't state", 'Recheck beta']) {
+      expect(raw).not.toContain(bad);
+    }
+    expect(raw).toContain('Includes 500K Flex Credits per org.');
+    expect(raw).toContain('"hiddenCosts"');
+  });
+});

@@ -10,7 +10,8 @@
     "test": "vitest",
     "check:fit": "node scripts/fit-check.mjs",
     "shots": "node scripts/shots.mjs",
-    "stills": "node scripts/capture-stills.mjs"
+    "stills": "node scripts/capture-stills.mjs",
+    "check:bundle": "node scripts/check-bundle.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^9.117.0",
