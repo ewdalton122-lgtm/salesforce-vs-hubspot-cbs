@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowRight, ChevronsRight, Info, Layers, Play, RotateCcw, TrendingUp } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Check, ChevronsRight, Info, Layers, Play, RotateCcw, Scale, TrendingUp, X } from 'lucide-react';
 import { cost, growth } from '../lib/content';
-import { computeAll, tierJump, usd, type CalcInputs } from '../lib/calc';
+import { computeAll, tierJump, usd, type CalcInputs, type CalcResult } from '../lib/calc';
 import { growthCounts } from '../lib/growth';
 import { Footnote, HsPill } from '../components/ui';
 import { track } from '../lib/env';
@@ -196,6 +196,67 @@ function GrowthStack() {
   );
 }
 
+type Side = { r: CalcResult; price: string; have?: string[]; lack?: string[]; extra?: string; source: string };
+
+function Bar({ side, max, sf }: { side: Side; max: number; sf: boolean }) {
+  return (
+    <div>
+      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+        <span className={`text-[16px] font-extrabold ${sf ? 'text-white' : 'text-[#dfe3ea]'}`}>
+          {side.r.label.replace(' (Sales + Service)', '')}
+          <Footnote id={side.source} tone={sf ? 'dark' : 'gray'} />
+        </span>
+        <span className={`text-[22px] font-extrabold tabular-nums ${sf ? 'text-white' : 'text-[#e6e9ef]'}`}>{usd(side.r.total)}</span>
+      </div>
+      <div className="mt-1.5 h-3.5 overflow-hidden rounded-full bg-white/[.08]">
+        <motion.div
+          className={`h-full rounded-full ${sf ? 'bg-gradient-to-r from-sf-electric to-sf-cloud shadow-[0_0_16px_rgba(0,179,255,.6)]' : 'bg-[#7a8294]'}`}
+          animate={{ width: `${(side.r.total / max) * 100}%` }}
+          transition={{ type: 'spring', stiffness: 120, damping: 20 }}
+        />
+      </div>
+      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[13px]">
+        <span className="text-night-dim">{side.price}</span>
+        {side.have?.map((h) => (
+          <span key={h} className={`flex items-center gap-1 font-semibold ${sf ? 'text-sf-sky' : 'text-[#cfd4de]'}`}>
+            <Check size={13} strokeWidth={3} aria-hidden /> {h}
+          </span>
+        ))}
+        {side.lack?.map((h) => (
+          <span key={h} className="flex items-center gap-1 font-semibold text-[#9aa2b1]">
+            <X size={13} strokeWidth={3} aria-hidden /> <span className="line-through decoration-[#9aa2b1]/60">{h}</span>
+          </span>
+        ))}
+        {side.extra && <span className="font-semibold text-[#cfd4de]">+ {side.extra}</span>}
+      </div>
+    </div>
+  );
+}
+
+function Matchup({ n, kicker, title, sf, hs, verdict, best }: { n: number; kicker: string; title: string; sf: Side; hs: Side; verdict: string; best?: boolean }) {
+  const max = Math.max(sf.r.total, hs.r.total);
+  return (
+    <div className={`rounded-2xl p-5 ${best ? 'card-sf-dark' : 'bg-white/5 ring-1 ring-white/10'}`}>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-[12.5px] font-extrabold uppercase tracking-[0.16em] text-sf-sky">
+          Matchup {n} · {kicker}
+        </p>
+        {best && (
+          <span className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-[12px] font-extrabold uppercase tracking-wider text-sf-blue">
+            <Scale size={13} aria-hidden /> Apples to apples
+          </span>
+        )}
+      </div>
+      <p className="mt-1.5 text-[19px] font-extrabold leading-snug">{title}</p>
+      <div className="mt-4 space-y-4">
+        <Bar side={sf} max={max} sf />
+        <Bar side={hs} max={max} sf={false} />
+      </div>
+      <p className={`mt-4 rounded-xl px-4 py-3 text-[15.5px] font-bold leading-snug ${best ? 'bg-white/15 text-white' : 'bg-sf-electric/20 text-white ring-1 ring-sf-cloud/30'}`}>{verdict}</p>
+    </div>
+  );
+}
+
 function Calculator() {
   const [inp, setInp] = useState<CalcInputs>({
     salesSeats: cost.defaults.salesSeats,
@@ -206,13 +267,29 @@ function Calculator() {
   });
   const jump = useMemo(() => tierJump(cost.options), []);
   const results = useMemo(() => computeAll(cost.options, inp), [inp]);
-  const ordered = useMemo(() => [...results].sort((a, b) => (a.vendor === b.vendor ? 0 : a.vendor === 'Salesforce' ? -1 : 1)), [results]);
-  const max = Math.max(...results.map((r) => r.total));
+  const by = Object.fromEntries(results.map((r) => [r.id, r]));
+  const integrate = inp.includeDataHub && inp.includeSfApiAddon;
   const set = <K extends keyof CalcInputs>(k: K, v: CalcInputs[K]) => {
     setInp((s) => ({ ...s, [k]: v }));
     track('calc_change', { field: k });
   };
-  const notes = Object.fromEntries(cost.options.map((o) => [o.id, o.note]));
+  const seat = Object.fromEntries(cost.options.map((o) => [o.id, o.seatPrice]));
+  const yrs = `${inp.years} ${inp.years === 1 ? 'year' : 'years'}`;
+  const sfPro = seat['sf-pro'] + (integrate ? 25 : 0);
+  const sfSide: Side = {
+    r: by['sf-pro'],
+    price: `$${sfPro} per user per month${integrate ? ' incl. API add-on' : ''}`,
+    have: ['Custom objects', 'Sandbox'],
+    source: 'sf-pricing-sales',
+  };
+  const lessBy = (hs: CalcResult) => {
+    const d = hs.total - by['sf-pro'].total;
+    return `Salesforce costs ${usd(d)} less over ${yrs}, ${Math.round((d / hs.total) * 100)}% below HubSpot.`;
+  };
+  const entryVerdict =
+    by['sf-pro'].total <= by['hs-pro'].total
+      ? `${lessBy(by['hs-pro'])} And it includes custom objects and a sandbox.`
+      : `For $${sfPro - seat['hs-pro']} more per user per month, Salesforce includes custom objects and a sandbox${integrate ? ', plus API access for two-way integration' : ''}. HubSpot Professional doesn't offer them, so growing means moving to Enterprise (matchup 1).`;
   const fill = (v: number, min: number, maxV: number) => `${((v - min) / (maxV - min)) * 100}%`;
 
   return (
@@ -292,45 +369,75 @@ function Calculator() {
               ))}
             </div>
           </fieldset>
-          {(['includeDataHub', 'includeSfApiAddon'] as const).map((k) => (
-            <label key={k} className="flex cursor-pointer items-start gap-3 text-[15px]">
-              <input type="checkbox" className="mt-1 h-4 w-4 accent-[#0176d3]" checked={inp[k]} onChange={(e) => set(k, e.target.checked)} />
-              <span>
-                {cost.inputs[k].label}
-                <Footnote id={k === 'includeDataHub' ? 'hs-pricing-data' : 'sf-pricing-sales'} />
+            <label className="flex cursor-pointer items-start gap-3 rounded-xl bg-white/5 p-3.5 text-[15px] ring-1 ring-white/10">
+            <input
+              type="checkbox"
+              className="mt-1 h-4 w-4 accent-[#0176d3]"
+              checked={integrate}
+              onChange={(e) => {
+                setInp((st) => ({ ...st, includeDataHub: e.target.checked, includeSfApiAddon: e.target.checked }));
+                track('calc_change', { field: 'integrate' });
+              }}
+            />
+            <span>
+              <span className="font-bold">We&apos;ll connect our ERP or data warehouse (two-way)</span>
+              <span className="mt-1 block text-[13.5px] text-night-dim">
+                Adds what each side requires: HubSpot Data Hub Enterprise, $2,000 a month
+                <Footnote id="hs-pricing-data" />, and the Salesforce Web Services API add-on, $25 per user per month on Pro Suite
+                <Footnote id="sf-pricing-sales" />.
               </span>
-            </label>
-          ))}
+            </span>
+          </label>
         </form>
 
         <div>
-          <ul className="space-y-3" aria-live="polite">
-            {ordered.map((r) => {
-              const sf = r.vendor === 'Salesforce';
-              return (
-                <li key={r.id}>
-                  <div className="flex flex-wrap items-baseline justify-between gap-2">
-                    <span className={`text-[15.5px] font-bold ${sf ? 'text-white' : 'text-[#cfd4de]'}`}>{r.label}</span>
-                    <span className={`text-[20px] font-extrabold tabular-nums ${sf ? 'text-white' : 'text-[#e6e9ef]'}`}>
-                      {usd(r.total)}
-                      <span className="ml-1 text-[13px] font-semibold text-night-dim">/ {inp.years} yr</span>
-                    </span>
-                  </div>
-                  <div className="mt-1.5 h-3 overflow-hidden rounded-full bg-white/[.08]">
-                    <motion.div
-                      className={`h-full rounded-full ${sf ? 'bg-gradient-to-r from-sf-electric to-sf-cloud shadow-[0_0_16px_rgba(0,179,255,.6)]' : 'bg-[#7a8294]'}`}
-                      animate={{ width: `${(r.total / max) * 100}%` }}
-                      transition={{ type: 'spring', stiffness: 120, damping: 20 }}
-                    />
-                  </div>
-                  <p className="mt-1 text-[13px] text-night-dim">
-                    {usd(r.annual)} a year{r.oneTime ? ` + ${usd(r.oneTime)} onboarding` : ''}
-                    {notes[r.id] && !/allotment/i.test(notes[r.id] ?? '') ? ` · ${notes[r.id]}` : r.id === 'sf-core' ? ' · Includes 500K Flex Credits per org' : ''}
-                  </p>
-                </li>
-              );
-            })}
-          </ul>
+          <div className="space-y-4" aria-live="polite">
+            <Matchup
+              n={1}
+              best
+              kicker="Same capabilities"
+              title="Custom objects and a sandbox on both sides"
+              sf={sfSide}
+              hs={{
+                r: by['hs-ent'],
+                price: `$${seat['hs-ent']} per user per month${integrate ? ' + Data Hub $2,000 a month' : ''}`,
+                have: ['Custom objects', 'Sandbox'],
+                extra: `${usd(by['hs-ent'].oneTime)} onboarding`,
+                source: 'hs-catalog-products',
+              }}
+              verdict={lessBy(by['hs-ent'])}
+            />
+            <Matchup
+              n={2}
+              kicker="Entry tiers"
+              title="What each entry tier includes"
+              sf={sfSide}
+              hs={{
+                r: by['hs-pro'],
+                price: `$${seat['hs-pro']} per user per month`,
+                lack: ['Custom objects', 'Sandbox', 'Field-level permissions', ...(integrate ? ['Two-way warehouse sync'] : [])],
+                extra: `${usd(by['hs-pro'].oneTime)} onboarding`,
+                source: 'hs-pricing-sales',
+              }}
+              verdict={entryVerdict}
+            />
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl bg-white/5 px-5 py-4 ring-1 ring-white/10">
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-sf-electric/30 text-sf-sky ring-1 ring-sf-cloud/40">
+                <ArrowUpRight size={18} aria-hidden />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-[15.5px] font-extrabold">
+                  The step up: Salesforce Core
+                  <Footnote id="sf-pricing-sales" />
+                </p>
+                <p className="text-[13.5px] text-night-dim">${seat['sf-core']} per user per month · Includes 500K Flex Credits per org.</p>
+              </div>
+              <p className="text-[19px] font-extrabold tabular-nums">
+                {usd(by['sf-core'].total)}
+                <span className="ml-1 text-[13px] font-semibold text-night-dim">/ {yrs}</span>
+              </p>
+            </div>
+          </div>
           <p className="mt-5 flex gap-2 rounded-xl bg-white/5 px-4 py-3 text-[14px] text-[#d5e3f7] ring-1 ring-white/10">
             <Info size={16} className="mt-0.5 shrink-0 text-sf-sky" aria-hidden />
             <span>{DISCLAIMER}</span>

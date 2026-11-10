@@ -144,3 +144,16 @@ describe('footnote numbering', () => {
     expect(nums).toEqual(nums.map((_, i) => i + 1));
   });
 });
+
+describe('head-to-head matchup 1 (same capabilities)', () => {
+  it('Salesforce Pro Suite costs less than HubSpot Enterprise for every scenario the calculator allows', () => {
+    const { salesSeats: s, serviceSeats: v, years } = cost.inputs;
+    for (let sales = s.min; sales <= s.max; sales += 7)
+      for (let service = v.min; service <= v.max; service += 11)
+        for (const y of years.options)
+          for (const integrate of [false, true]) {
+            const inp = { salesSeats: sales, serviceSeats: service, years: y, includeDataHub: integrate, includeSfApiAddon: integrate };
+            expect(computeOption(opt('sf-pro'), inp).total).toBeLessThan(computeOption(opt('hs-ent'), inp).total);
+          }
+  });
+});
