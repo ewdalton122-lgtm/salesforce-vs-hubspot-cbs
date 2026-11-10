@@ -1,4 +1,4 @@
-import { checks, story, journey, growth, platform, proof, questions, demoPaths, simulator, sources } from './content';
+import { checks, cost, story, journey, growth, platform, proof, questions, demoPaths, simulator, sources } from './content';
 import { numberSources } from './footnotes';
 import { readFlags } from './env';
 
@@ -21,7 +21,14 @@ export function pageSourceOrder({ includeCsm = true }: { includeCsm?: boolean } 
         push(s.salesforce.source);
         s.hubspot.forEach((b) => push(b.source));
       });
-      ['sf-pricing-sales', 'hs-pricing-sales', 'hs-pricing-data'].forEach(push);
+      ['hs-catalog-products', cost.tierJump.source].forEach(push);
+      cost.salesforce.includes.forEach((i) => push(i.source));
+      [cost.salesforce.source, cost.hubspot.seatSource, cost.hubspot.onboardingSource].forEach(push);
+      cost.needs.forEach((n) => {
+        push(n.sfSource);
+        push(n.source);
+      });
+      cost.excluded.forEach((e) => push(e.source));
     }
     if (c.id === 'operations') {
       journey.steps.forEach((s) => {

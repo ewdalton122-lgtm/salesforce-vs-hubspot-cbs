@@ -1,35 +1,100 @@
 {
-  "_note": "Interactive cost scenario. List prices, per user per month, billed annually, as of Nov 2026. No discounts, partner services or third-party apps. Show the assumptions and disclaimer beside the results at all times.",
+  "_note": "Bundle vs. stack cost scenario. One Salesforce license that already includes the capabilities, against HubSpot's top tier plus the add-ons it takes to match. List prices, billed annually, as of Nov 2026. No edition names in rendered copy.",
   "asOf": "2026-11",
   "defaults": { "salesSeats": 30, "serviceSeats": 20, "years": 3 },
   "inputs": {
-    "salesSeats": { "min": 1, "max": 500, "step": 1 },
-    "serviceSeats": { "min": 0, "max": 500, "step": 1 },
-    "years": { "options": [1, 2, 3, 5] },
-    "includeDataHub": { "default": false, "label": "Two-way warehouse sync (HubSpot needs Data Hub Enterprise)" },
-    "includeSfApiAddon": { "default": false, "label": "Salesforce Web Services API add-on (+$25/user/month on Pro Suite)" }
+    "salesSeats": { "min": 1, "max": 300, "step": 1 },
+    "serviceSeats": { "min": 0, "max": 300, "step": 1 },
+    "years": { "options": [1, 2, 3, 5] }
   },
-  "options": [
-    { "id": "hs-pro", "vendor": "HubSpot", "label": "HubSpot Professional (Sales + Service)", "seatPrice": 90, "onboardingPerHub": 1500, "hubs": "count of hubs with seats > 0", "note": "Custom objects, sandbox and field-level permissions are NOT included at this tier." },
-    { "id": "hs-ent", "vendor": "HubSpot", "label": "HubSpot Enterprise (Sales + Service)", "seatPrice": 150, "onboardingPerHub": 3500, "hubs": "count of hubs with seats > 0", "addons": { "includeDataHub": { "monthly": 2000 } } },
-    { "id": "sf-pro", "vendor": "Salesforce", "label": "Salesforce Pro Suite", "seatPrice": 100, "addons": { "includeSfApiAddon": { "perSeatMonthly": 25 } }, "note": "Custom objects and sandbox included." },
-    { "id": "sf-core", "vendor": "Salesforce", "label": "Salesforce Core", "seatPrice": 195, "note": "Includes 500K Flex Credits per org. Don't state an allotment period." }
+  "tierJump": { "entrySeat": 90, "topSeat": 150, "source": "hs-pricing-sales" },
+  "salesforce": {
+    "seatPrice": 195,
+    "source": "sf-pricing-sales",
+    "includes": [
+      { "label": "Custom objects", "source": "sf-pricing-sales" },
+      { "label": "Partial Copy + Developer sandboxes", "source": "sf-pricing-sales" },
+      { "label": "Field-level security", "source": "sf-fls" },
+      { "label": "APIs for two-way sync", "source": "sf-pricing-sales" },
+      { "label": "Data 360", "source": "sf-data-pricing" },
+      { "label": "500K Flex Credits per org", "source": "sf-pricing-sales" },
+      { "label": "Slack Business+", "source": "sf-pricing-sales" },
+      { "label": "Premier Success Plan", "source": "sf-pricing-sales" },
+      { "label": "Tableau Next", "source": "sf-pricing-sales" }
+    ],
+    "extras": ["Slack Business+", "a Premier Success Plan", "Tableau Next"]
+  },
+  "hubspot": {
+    "seatPrice": 150,
+    "seatSource": "hs-catalog-overview",
+    "onboardingPerHub": 3500,
+    "onboardingSource": "hs-catalog-products"
+  },
+  "needs": [
+    {
+      "id": "sync",
+      "label": "Two-way ERP or warehouse sync",
+      "default": true,
+      "hubspot": "Data Hub, top tier",
+      "monthly": 2000,
+      "source": "hs-catalog-products",
+      "salesforce": "Data 360 and APIs",
+      "sfSource": "sf-data-pricing"
+    },
+    {
+      "id": "sandbox",
+      "label": "Separate build and test sandboxes",
+      "default": true,
+      "hubspot": "Second sandbox (top tier includes one)",
+      "monthly": 750,
+      "source": "hs-catalog-addons",
+      "salesforce": "Partial Copy + Developer sandboxes",
+      "sfSource": "sf-pricing-sales"
+    },
+    {
+      "id": "objects",
+      "label": "More than 10 custom objects",
+      "default": false,
+      "hubspot": "10 more custom objects (top tier includes 10)",
+      "monthly": 500,
+      "source": "hs-catalog-addons",
+      "salesforce": "Custom objects",
+      "sfSource": "sf-pricing-sales"
+    },
+    {
+      "id": "ai",
+      "label": "AI agents past the included credits",
+      "default": true,
+      "hubspot": "Credit pack (top tier includes 5,000 a month)",
+      "source": "hs-catalog-addons",
+      "salesforce": "500K Flex Credits per org",
+      "sfSource": "sf-pricing-sales",
+      "defaultPack": "growth",
+      "packs": [
+        { "id": "base", "label": "Base", "credits": 2500, "monthly": 25 },
+        { "id": "growth", "label": "Growth", "credits": 40000, "monthly": 400 },
+        { "id": "scaled", "label": "Scaled", "credits": 150000, "monthly": 1500 }
+      ]
+    }
   ],
-  "formula": "annual = (salesSeats + serviceSeats) * seatPrice * 12 + addonMonthly * 12 + addonPerSeatMonthly * seats * 12;  total = annual * years + onboardingPerHub * hubs (one-time, HubSpot only)",
+  "excluded": [
+    { "label": "field service apps", "fieldOnly": true, "source": "sf-field-service" },
+    { "label": "CPQ", "source": "sf-revenue-cloud" }
+  ],
+  "disclosure": "Salesforce is priced at the public list price of the license that includes everything listed here. Your account team will confirm scope.",
+  "formula": "salesforce = (salesSeats + serviceSeats) * seatPrice * 12 * years. hubspot = seats * seatPrice * 12 * years + onboardingPerHub * hubs (one-time; hubs with seats > 0) + sum(monthly of each need picked) * 12 * years.",
   "referenceCheck": {
-    "_note": "Unit-test fixture. With 30 sales + 20 service seats, these must match exactly.",
-    "hs-pro": { "annual": 54000, "threeYear": 165000 },
-    "hs-ent": { "annual": 90000, "threeYear": 277000 },
-    "hs-ent+dataHub": { "annual": 114000, "threeYear": 349000 },
-    "sf-pro": { "annual": 60000, "threeYear": 180000 },
-    "sf-pro+api": { "annual": 75000, "threeYear": 225000 },
-    "sf-core": { "annual": 117000, "threeYear": 351000 }
+    "_note": "Unit-test fixture. 30 sales + 20 service users, 3 years.",
+    "salesforce": 351000,
+    "hubspot-none": 277000,
+    "hubspot-sync-sandbox": 376000,
+    "hubspot-defaults": 390400
   },
   "presentationRules": [
-    "Headline the TIER JUMP: the capabilities a growing CBS company needs are Enterprise-only at HubSpot ($90 → $150, +67%, plus onboarding per hub). Salesforce Pro Suite includes custom objects and a sandbox at $100.",
-    "Never claim Salesforce is cheaper overall. Core is not cheaper seat-for-seat at list. Position it as more capability per dollar and fewer add-ons.",
-    "Never compare AI cost per resolution. If AI is discussed, compare predictability: credits that last the contract vs monthly reset and pause.",
-    "Always show: 'List prices, per user per month, billed annually, as of Nov 2026. Excludes discounts, partner services and third-party apps. Validate scope with your Salesforce account executive.'"
+    "Never name editions in rendered copy. Compare one Salesforce license with HubSpot's top tier and the add-ons it takes to match.",
+    "Never claim Salesforce is cheaper overall. Only the scoped verdict: 'for what you picked ... at list'. When Salesforce costs more, say the per-user gap and what the license includes.",
+    "Never compare AI cost per resolution. Don't state a Flex Credit allotment period.",
+    "Always show the disclaimer and the disclosure beside the results."
   ],
   "hiddenCosts": {
     "title": "Costs that often don't show up in a HubSpot quote",

@@ -30,6 +30,21 @@
       "label": "Salesforce Help: Salesforce Microsoft Teams integration (Enterprise edition and up)",
       "url": "https://help.salesforce.com/s/articleView?id=000389540&language=en_US&type=1",
       "asOf": "2026-11"
+    },
+    "sf-data-pricing": {
+      "label": "Salesforce Data 360 pricing",
+      "url": "https://www.salesforce.com/data/pricing/",
+      "asOf": "2026-11"
+    },
+    "hs-catalog-overview": {
+      "label": "HubSpot Product & Services Catalog: Pricing overview",
+      "url": "https://legal.hubspot.com/hubspot-product-and-services-catalog",
+      "asOf": "2026-11"
+    },
+    "sf-fls": {
+      "label": "Salesforce Help: Field-level security",
+      "url": "https://help.salesforce.com/s/articleView?id=platform.users_fields_fls.htm&type=5",
+      "asOf": "2026-11"
     }
   }
 }

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { checks, cost, simulator, journey, growth, industries, industryById, platform, sources, story, storyFor, journeyStepsFor, growthStagesFor, pointsFor, fillObjects } from '../src/lib/content';
-import { computeAll, computeOption, tierJump, type CalcOption } from '../src/lib/calc';
+import { computeTco, tcoVerdict, tierJump, type TcoInputs } from '../src/lib/calc';
 import { creditMath, creditCalendar } from '../src/lib/credits';
 import { BASELINE, evaluate, encodeInputs, decodeInputs, hasScenario, TRIGGERS, type SimInputs } from '../src/lib/simulator';
 import { computeHandoffs, computeSystems, tallyUpTo } from '../src/lib/journey';
@@ -9,37 +9,63 @@ import { growthCounts } from '../src/lib/growth';
 import { numberSources } from '../src/lib/footnotes';
 import { footnoteNumbers, pageSourceOrder } from '../src/lib/sourceOrder';
 
-const options = cost.options as CalcOption[];
-const base = { salesSeats: 30, serviceSeats: 20, years: 3, includeDataHub: false, includeSfApiAddon: false };
+const none = Object.fromEntries(cost.needs.map((n) => [n.id, false]));
+const defaultNeeds = Object.fromEntries(cost.needs.map((n) => [n.id, n.default]));
+const base: TcoInputs = { salesSeats: 30, serviceSeats: 20, years: 3, needs: none, pack: 'growth' };
 // The fixture is editor-only and stripped from the bundle, so read it from the source file.
-const ref = JSON.parse(readFileSync('src/content/cost-calculator.json', 'utf8')).referenceCheck as Record<string, { annual: number; threeYear: number }>;
-const opt = (id: string) => options.find((o) => o.id === id)!;
+const ref = JSON.parse(readFileSync('src/content/cost-calculator.json', 'utf8')).referenceCheck as Record<string, number>;
+const tco = (extra: Partial<TcoInputs> = {}) => computeTco(cost, { ...base, ...extra });
 
-describe('cost calculator matches cost-calculator.json referenceCheck', () => {
-  const cases: Array<[string, string, Partial<typeof base>]> = [
-    ['hs-pro', 'hs-pro', {}],
-    ['hs-ent', 'hs-ent', {}],
-    ['hs-ent+dataHub', 'hs-ent', { includeDataHub: true }],
-    ['sf-pro', 'sf-pro', {}],
-    ['sf-pro+api', 'sf-pro', { includeSfApiAddon: true }],
-    ['sf-core', 'sf-core', {}],
-  ];
-  for (const [key, id, extra] of cases) {
-    it(key, () => {
-      const r = computeOption(opt(id), { ...base, ...extra });
-      expect(r.annual).toBe(ref[key].annual);
-      expect(r.total).toBe(ref[key].threeYear);
-    });
-  }
-  it('onboarding is one-time and per hub with seats', () => {
-    const r = computeOption(opt('hs-pro'), { ...base, serviceSeats: 0, years: 1 });
-    expect(r.oneTime).toBe(1500);
+describe('bundle vs. stack matches cost-calculator.json referenceCheck', () => {
+  it('one Salesforce license', () => expect(tco().salesforce).toBe(ref.salesforce));
+  it('HubSpot top tier, no add-ons', () => expect(tco().hubspot).toBe(ref['hubspot-none']));
+  it('HubSpot + sync + second sandbox', () => expect(tco({ needs: { ...none, sync: true, sandbox: true } }).hubspot).toBe(ref['hubspot-sync-sandbox']));
+  it('HubSpot with the default needs', () => expect(tco({ needs: defaultNeeds }).hubspot).toBe(ref['hubspot-defaults']));
+  it('onboarding is one-time and per hub with users', () => {
+    expect(tco({ serviceSeats: 0, years: 1 }).stack.find((l) => l.id === 'onboarding')!.amount).toBe(3500);
   });
-  it('Salesforce options carry no onboarding fee', () => {
-    computeAll(options, base).filter((r) => r.vendor === 'Salesforce').forEach((r) => expect(r.oneTime).toBe(0));
+  it('the stack adds up to the HubSpot total', () => {
+    const r = tco({ needs: defaultNeeds });
+    expect(r.stack.reduce((s, l) => s + l.amount, 0)).toBe(r.hubspot);
   });
-  it('tier jump is $90 -> $150, +67%, vs Pro Suite $100', () => {
-    expect(tierJump(options)).toEqual({ from: 90, to: 150, pct: 67, sf: 100 });
+  it('tier jump is $90 -> $150, +67%', () => {
+    expect(tierJump(cost.tierJump)).toEqual({ from: 90, to: 150, pct: 67 });
+  });
+});
+
+describe('the cost verdict stays honest', () => {
+  it('says "under" only when Salesforce really costs less, and never claims cheaper overall', () => {
+    const { salesSeats: s, serviceSeats: v, years } = cost.inputs;
+    const combos = [none, defaultNeeds, Object.fromEntries(cost.needs.map((n) => [n.id, true]))];
+    let under = 0;
+    let more = 0;
+    for (let sales = s.min; sales <= s.max; sales += 13)
+      for (let service = v.min; service <= v.max; service += 17)
+        for (const y of years.options)
+          for (const needs of combos)
+            for (const pack of ['base', 'growth', 'scaled']) {
+              const inp = { salesSeats: sales, serviceSeats: service, years: y, needs, pack };
+              const r = computeTco(cost, inp);
+              const vd = tcoVerdict(cost, r, y);
+              expect(vd.text).not.toMatch(/cheaper|lowest|always|overall/i);
+              if (vd.kind === 'under') {
+                under++;
+                expect(r.salesforce).toBeLessThanOrEqual(r.hubspot);
+                expect(vd.text).toMatch(/^For what you picked/);
+                expect(vd.text).toMatch(/at list\.$/);
+              } else {
+                more++;
+                expect(r.salesforce).toBeGreaterThan(r.hubspot);
+                expect(vd.perUserMonth * r.seats * r.months).toBeGreaterThanOrEqual(r.salesforce - r.hubspot);
+                expect(vd.text).not.toMatch(/under/);
+              }
+            }
+    expect(under).toBeGreaterThan(0);
+    expect(more).toBeGreaterThan(0);
+  });
+  it('the defaults show the scoped "under" verdict', () => {
+    const r = tco({ needs: defaultNeeds });
+    expect(tcoVerdict(cost, r, 3)).toMatchObject({ kind: 'under', diff: 39400 });
   });
 });
 
@@ -157,19 +183,6 @@ describe('footnote numbering', () => {
   });
 });
 
-describe('head-to-head matchup 1 (same capabilities)', () => {
-  it('Salesforce Pro Suite costs less than HubSpot Enterprise for every scenario the calculator allows', () => {
-    const { salesSeats: s, serviceSeats: v, years } = cost.inputs;
-    for (let sales = s.min; sales <= s.max; sales += 7)
-      for (let service = v.min; service <= v.max; service += 11)
-        for (const y of years.options)
-          for (const integrate of [false, true]) {
-            const inp = { salesSeats: sales, serviceSeats: service, years: y, includeDataHub: integrate, includeSfApiAddon: integrate };
-            expect(computeOption(opt('sf-pro'), inp).total).toBeLessThan(computeOption(opt('hs-ent'), inp).total);
-          }
-  });
-});
-
 describe('industry tailoring', () => {
   const FIELD_WORDS = /technician|dispatch|\bcrews?\b|\btrucks?\b|field service|work order|hvac|\bpickups?\b|in the field/i;
   const OFFICE_WORDS = /\bmatters?\b|candidates?|placements?|job orders?|\bintake\b|\bshippers?\b|\bloads?\b/i;
@@ -185,6 +198,7 @@ describe('industry tailoring', () => {
     checks.checks.forEach((c) => lines.push(fillObjects(c.salesforce.headline, ind)));
     checks.checks.forEach((c) => [...pointsFor(c.salesforce.points, ind), ...pointsFor(c.hubspot.points, ind)].forEach((p) => lines.push(p.label)));
     cost.hiddenCosts.items.filter((h) => ind.field || !cost.hiddenCosts.fieldOnly.includes(h)).forEach((h) => lines.push(h));
+    cost.excluded.filter((e) => ind.field || !e.fieldOnly).forEach((e) => lines.push(e.label));
     Object.values(platform.examples[id] ?? {}).forEach((l) => lines.push(...l));
     return lines;
   };

@@ -92,6 +92,17 @@ describe('copy guardrails (main experience)', () => {
   }
 });
 
+describe('cost section names no editions', () => {
+  const editions = /Pro Suite|Starter Suite|\bCore\b|Professional|Enterprise|Unlimited|Agentforce 1/;
+  it('in the calculator content', () => {
+    const hits = strings.filter((s) => s.file === 'cost-calculator.json' && editions.test(s.value)).map((s) => `${s.path}: ${s.value}`);
+    expect(hits).toEqual([]);
+  });
+  it('in the cost section and verdict code', () => {
+    for (const f of ['src/sections/CostCheck.tsx', 'src/lib/calc.ts']) expect(readFileSync(join(ROOT, f), 'utf8'), f).not.toMatch(editions);
+  });
+});
+
 describe('brand guardrails', () => {
   const codeFiles: string[] = [];
   const collect = (dir: string) => {
@@ -132,7 +143,7 @@ describe('production build strips editor-only content', () => {
     for (const bad of ['"_note"', '"guardrail"', '"presentationRules"', '"distribution"', '#marketinglegal', "Don't state", 'Recheck beta']) {
       expect(raw).not.toContain(bad);
     }
-    expect(raw).toContain('Includes 500K Flex Credits per org.');
+    expect(raw).toContain('"disclosure"');
     expect(raw).toContain('"hiddenCosts"');
   });
 

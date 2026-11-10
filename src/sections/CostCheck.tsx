@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowRight, ArrowUpRight, Check, ChevronsRight, EyeOff, Info, Layers, MessageSquareQuote, Play, RotateCcw, Scale, SlidersHorizontal, TrendingUp, X } from 'lucide-react';
+import { AnimatePresence, motion, useInView, useReducedMotion } from 'framer-motion';
+import { ArrowRight, CalendarDays, Check, ChevronsRight, EyeOff, Info, Layers, MessageSquareQuote, Play, Plus, RotateCcw, Scale, TrendingUp, Users } from 'lucide-react';
 import { checkById, cost, growth, growthStagesFor } from '../lib/content';
 import { useApp } from '../context/AppContext';
-import { computeAll, tierJump, usd, type CalcInputs, type CalcResult } from '../lib/calc';
+import { computeTco, needMonthly, tcoVerdict, tierJump, usd } from '../lib/calc';
 import { growthCounts } from '../lib/growth';
 import { Footnote, HsPill } from '../components/ui';
 import { track } from '../lib/env';
 
 const DISCLAIMER =
-  'List prices, per user per month, billed annually, as of Nov 2026. Excludes discounts, partner services and third-party apps. Validate scope with your Salesforce account executive.';
+  'List prices, billed annually, as of Nov 2026. Excludes discounts, partner services and third-party apps.';
 
 const THUMB = 56;
 const at = (f: number) => `calc(${THUMB / 2}px + (100% - ${THUMB}px) * ${f})`;
@@ -201,284 +201,482 @@ function GrowthStack() {
   );
 }
 
-type Side = { r: CalcResult; price: string; have?: string[]; lack?: string[]; extra?: string; source: string };
+const SEGMENT: Record<string, string> = {
+  seats: '#677083',
+  onboarding: '#7d8596',
+  sync: '#939aa9',
+  sandbox: '#a7adba',
+  objects: '#babfc9',
+  ai: '#cdd1d9',
+};
 
-function Bar({ side, max, sf }: { side: Side; max: number; sf: boolean }) {
+const COLS = 'grid grid-cols-2 gap-x-3 gap-y-2.5 sm:gap-x-5 lg:grid-cols-[1fr_250px_1fr] lg:items-center';
+const MID = 'col-span-2 lg:col-span-1';
+
+function useTween(value: number, ms = 650) {
+  const reduce = useReducedMotion();
+  const [v, setV] = useState(value);
+  const cur = useRef(value);
+  const first = useRef(true);
+  useEffect(() => {
+    if (reduce || first.current) {
+      first.current = false;
+      cur.current = value;
+      setV(value);
+      return;
+    }
+    const start = cur.current;
+    const t0 = performance.now();
+    let raf = 0;
+    const tick = (t: number) => {
+      const k = Math.min(1, (t - t0) / ms);
+      cur.current = start + (value - start) * (1 - Math.pow(1 - k, 3));
+      setV(cur.current);
+      if (k < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [value, ms, reduce]);
+  return v;
+}
+
+function Money({ value, className = '' }: { value: number; className?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const seen = useInView(ref, { once: true, amount: 0.5 });
+  const v = useTween(seen ? value : 0, seen ? 650 : 0);
+  return (
+    <span ref={ref} className={`tabular-nums ${className}`}>
+      {usd(Math.round(v))}
+    </span>
+  );
+}
+
+function TierJump() {
+  const jump = tierJump(cost.tierJump);
   return (
     <div>
-      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-        <span className={`text-[16px] font-extrabold ${sf ? 'text-white' : 'text-[#dfe3ea]'}`}>
-          {side.r.label.replace(' (Sales + Service)', '')}
-          <Footnote id={side.source} tone={sf ? 'dark' : 'gray'} />
-        </span>
-        <span className={`text-[22px] font-extrabold tabular-nums ${sf ? 'text-white' : 'text-[#e6e9ef]'}`}>{usd(side.r.total)}</span>
+      <div className="mx-auto max-w-[880px] text-center">
+        <p className="kicker-dark">Bundle vs. stack</p>
+        <h4 className="mt-2 text-[24px] font-extrabold leading-tight sm:text-[32px]">
+          One Salesforce license already includes what HubSpot sells as tiers and add-ons.
+        </h4>
+        <p className="mx-auto mt-3 max-w-[760px] text-[17px] text-night-dim">
+          At HubSpot, custom objects, a sandbox and field-level permissions are top-tier only
+          <Footnote id="hs-catalog-products" />. Then the add-ons start.
+        </p>
       </div>
-      <div className="mt-1.5 h-3.5 overflow-hidden rounded-full bg-white/[.08]">
-        <motion.div
-          className={`h-full rounded-full ${sf ? 'bg-gradient-to-r from-sf-electric to-sf-cloud shadow-[0_0_16px_rgba(0,179,255,.6)]' : 'bg-[#7a8294]'}`}
-          animate={{ width: `${(side.r.total / max) * 100}%` }}
-          transition={{ type: 'spring', stiffness: 120, damping: 20 }}
-        />
-      </div>
-      <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-[13px]">
-        <span className="text-night-dim">{side.price}</span>
-        {side.have?.map((h) => (
-          <span key={h} className={`flex items-center gap-1 font-semibold ${sf ? 'text-sf-sky' : 'text-[#cfd4de]'}`}>
-            <Check size={13} strokeWidth={3} aria-hidden /> {h}
-          </span>
-        ))}
-        {side.lack?.map((h) => (
-          <span key={h} className="flex items-center gap-1 font-semibold text-[#9aa2b1]">
-            <X size={13} strokeWidth={3} aria-hidden /> <span className="line-through decoration-[#9aa2b1]/60">{h}</span>
-          </span>
-        ))}
-        {side.extra && <span className="font-semibold text-[#cfd4de]">+ {side.extra}</span>}
+
+      <div className="mt-7 grid gap-4 lg:grid-cols-2">
+        <div className="card-sf-dark flex flex-col rounded-2xl p-5 sm:p-6">
+          <p className="flex items-center justify-between gap-2 text-[12.5px] font-extrabold uppercase tracking-[0.16em] text-sf-sky">
+            <span className="flex items-center gap-2">
+              <Layers size={15} aria-hidden /> Salesforce
+            </span>
+            <span className="normal-case tracking-normal text-white">One license, included</span>
+          </p>
+          <ul className="mt-4 grid flex-1 grid-cols-2 gap-2 sm:grid-cols-3">
+            {cost.salesforce.includes.map((i, k) => (
+              <motion.li
+                key={i.label}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.6 }}
+                transition={{ delay: k * 0.05 }}
+                className="flex items-center gap-2 rounded-xl bg-white/[.12] px-3 py-2.5 text-[14px] font-bold leading-snug ring-1 ring-white/20 last:col-span-2 last:justify-center sm:last:col-span-1 sm:last:justify-start"
+              >
+                <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-sf-cloud text-[#020818] shadow-[0_0_12px_rgba(127,211,255,.7)]">
+                  <Check size={12} strokeWidth={3.5} aria-hidden />
+                </span>
+                <span>
+                  {i.label}
+                  <Footnote id={i.source} />
+                </span>
+              </motion.li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="flex flex-col rounded-2xl bg-white/5 p-5 ring-1 ring-white/10 sm:p-6">
+          <p className="flex items-center justify-between gap-2 text-[12.5px] font-extrabold uppercase tracking-[0.16em] text-[#b9c0cc]">
+            <span className="flex items-center gap-2">
+              <TrendingUp size={15} aria-hidden /> HubSpot
+            </span>
+            <span className="normal-case tracking-normal text-[#e6e9ef]">Climb to the top tier first</span>
+          </p>
+          <div className="mt-4 grid flex-1 grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-xl bg-white/[.05] px-4 py-3 ring-1 ring-white/10">
+            <div className="text-center">
+              <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#b9c0cc]">Entry tier</p>
+              <p className="text-[34px] font-extrabold tabular-nums text-[#e6e9ef] sm:text-[40px]">${jump.from}</p>
+            </div>
+            <ArrowRight className="text-[#b9c0cc]" aria-hidden />
+            <div className="text-center">
+              <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#b9c0cc]">Top tier</p>
+              <p className="text-[34px] font-extrabold tabular-nums text-[#e6e9ef] sm:text-[40px]">
+                ${jump.to}
+                <span className="ml-1 align-middle text-[15px] font-bold text-[#b9c0cc]">+{jump.pct}%</span>
+              </p>
+            </div>
+            <p className="col-span-3 -mt-1 text-center text-[13px] text-[#b9c0cc]">
+              Per user per month, list
+              <Footnote id={cost.tierJump.source} tone="gray" />
+            </p>
+          </div>
+          <div className="mt-2 grid grid-cols-2 gap-2 text-[14px] font-bold text-[#e6e9ef]">
+            <p className="flex items-center gap-2 rounded-xl bg-[#4a505d] px-3 py-2.5">
+              <Plus size={14} className="shrink-0 text-[#b9c0cc]" aria-hidden />
+              <span>
+                {usd(cost.hubspot.onboardingPerHub)} onboarding per hub
+                <Footnote id={cost.hubspot.onboardingSource} tone="gray" />
+              </span>
+            </p>
+            <p className="flex items-center gap-2 rounded-xl bg-[#4a505d] px-3 py-2.5">
+              <Plus size={14} className="shrink-0 text-[#b9c0cc]" aria-hidden />
+              <span>Add-ons for sync, sandboxes, objects and AI</span>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-function Matchup({ n, kicker, title, sf, hs, verdict, best }: { n: number; kicker: string; title: string; sf: Side; hs: Side; verdict: string; best?: boolean }) {
-  const max = Math.max(sf.r.total, hs.r.total);
+function Switch({ on, label, onClick }: { on: boolean; label: string; onClick: () => void }) {
   return (
-    <div className={`rounded-2xl p-5 ${best ? 'card-sf-dark' : 'bg-white/5 ring-1 ring-white/10'}`}>
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-[12.5px] font-extrabold uppercase tracking-[0.16em] text-sf-sky">
-          Matchup {n} · {kicker}
-        </p>
-        {best && (
-          <span className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1 text-[12px] font-extrabold uppercase tracking-wider text-sf-blue">
-            <Scale size={13} aria-hidden /> Apples to apples
-          </span>
-        )}
-      </div>
-      <p className="mt-1.5 text-[19px] font-extrabold leading-snug">{title}</p>
-      <div className="mt-4 space-y-4">
-        <Bar side={sf} max={max} sf />
-        <Bar side={hs} max={max} sf={false} />
-      </div>
-      <p className={`mt-4 rounded-xl px-4 py-3 text-[15.5px] font-bold leading-snug ${best ? 'bg-white/15 text-white' : 'bg-sf-electric/20 text-white ring-1 ring-sf-cloud/30'}`}>{verdict}</p>
+    <button
+      type="button"
+      role="switch"
+      aria-checked={on}
+      onClick={onClick}
+      className={`flex w-full items-center justify-between gap-3 rounded-xl px-3 py-2.5 text-left text-[14.5px] font-bold leading-snug transition-colors ${
+        on ? 'bg-sf-electric/30 text-white ring-1 ring-sf-cloud/60' : 'bg-white/[.06] text-night-dim ring-1 ring-white/10 hover:text-white'
+      }`}
+    >
+      {label}
+      <span className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${on ? 'bg-sf-cloud' : 'bg-white/20'}`} aria-hidden>
+        <motion.span
+          className="absolute top-1 h-4 w-4 rounded-full bg-white shadow"
+          animate={{ left: on ? 24 : 4 }}
+          transition={{ type: 'spring', stiffness: 500, damping: 32 }}
+        />
+      </span>
+    </button>
+  );
+}
+
+function SfIncluded({ text, source, on = true }: { text: string; source: string; on?: boolean }) {
+  return (
+    <div className={`flex flex-col items-end text-right transition-opacity duration-300 ${on ? '' : 'opacity-35'}`}>
+      <span className="flex items-center gap-1.5 rounded-full bg-sf-cloud/20 px-2.5 py-1 text-[12.5px] font-extrabold uppercase tracking-wider text-sf-sky ring-1 ring-sf-cloud/50">
+        <Check size={13} strokeWidth={3} aria-hidden /> Included
+      </span>
+      <span className="mt-1 text-[13.5px] font-semibold text-[#d5e3f7]">
+        {text}
+        <Footnote id={source} />
+      </span>
+    </div>
+  );
+}
+
+function HsCost({ id, amount, text, source, on = true }: { id: string; amount: number; text: string; source: string; on?: boolean }) {
+  return (
+    <div className={`text-left transition-opacity duration-300 ${on ? '' : 'opacity-35'}`}>
+      <span className="flex items-center gap-2">
+        <span className="h-3 w-3 shrink-0 rounded-[4px]" style={{ background: SEGMENT[id] }} aria-hidden />
+        {on ? <Money value={amount} className="text-[19px] font-extrabold text-[#e6e9ef]" /> : <span className="text-[15px] font-bold text-[#9aa2b1]">Not needed</span>}
+      </span>
+      <span className="mt-1 block text-[13.5px] font-semibold text-[#b9c0cc]">
+        {text}
+        <Footnote id={source} tone="gray" />
+      </span>
     </div>
   );
 }
 
 function Calculator() {
   const { industry } = useApp();
-  const [inp, setInp] = useState<CalcInputs>({
-    salesSeats: cost.defaults.salesSeats,
-    serviceSeats: cost.defaults.serviceSeats,
-    years: cost.defaults.years,
-    includeDataHub: cost.inputs.includeDataHub.default,
-    includeSfApiAddon: cost.inputs.includeSfApiAddon.default,
-  });
-  const jump = useMemo(() => tierJump(cost.options), []);
-  const results = useMemo(() => computeAll(cost.options, inp), [inp]);
-  const by = Object.fromEntries(results.map((r) => [r.id, r]));
-  const integrate = inp.includeDataHub && inp.includeSfApiAddon;
-  const set = <K extends keyof CalcInputs>(k: K, v: CalcInputs[K]) => {
-    setInp((s) => ({ ...s, [k]: v }));
-    track('calc_change', { field: k });
+  const d = cost.defaults;
+  const [seats, setSeats] = useState({ salesSeats: d.salesSeats, serviceSeats: d.serviceSeats });
+  const [years, setYears] = useState(d.years);
+  const [needs, setNeeds] = useState<Record<string, boolean>>(() => Object.fromEntries(cost.needs.map((n) => [n.id, n.default])));
+  const [pack, setPack] = useState(cost.needs.find((n) => n.packs)?.defaultPack ?? '');
+  const r = useMemo(() => computeTco(cost, { ...seats, years, needs, pack }), [seats, years, needs, pack]);
+  const v = tcoVerdict(cost, r, years);
+  const max = Math.max(r.salesforce, r.hubspot);
+  const amount = (id: string) => r.stack.find((l) => l.id === id)?.amount ?? 0;
+  const users = `${r.seats} ${r.seats === 1 ? 'user' : 'users'}`;
+  const perUser = (n: number) => Math.round(n / (r.seats * r.months));
+  const fill = (x: number, min: number, maxV: number) => `${((x - min) / (maxV - min)) * 100}%`;
+  const toggle = (id: string) => {
+    setNeeds((s) => ({ ...s, [id]: !s[id] }));
+    track('calc_change', { field: id });
   };
-  const seat = Object.fromEntries(cost.options.map((o) => [o.id, o.seatPrice]));
-  const yrs = `${inp.years} ${inp.years === 1 ? 'year' : 'years'}`;
-  const sfPro = seat['sf-pro'] + (integrate ? 25 : 0);
-  const sfSide: Side = {
-    r: by['sf-pro'],
-    price: `$${sfPro} per user per month${integrate ? ' incl. API add-on' : ''}`,
-    have: ['Custom objects', 'Sandbox'],
-    source: 'sf-pricing-sales',
-  };
-  const lessBy = (hs: CalcResult) => {
-    const d = hs.total - by['sf-pro'].total;
-    return `Salesforce costs ${usd(d)} less over ${yrs}, ${Math.round((d / hs.total) * 100)}% below HubSpot.`;
-  };
-  const entryVerdict =
-    by['sf-pro'].total <= by['hs-pro'].total
-      ? `${lessBy(by['hs-pro'])} And it includes custom objects and a sandbox.`
-      : `For $${sfPro - seat['hs-pro']} more per user per month, Salesforce includes custom objects and a sandbox${integrate ? ', plus API access for two-way integration' : ''}. HubSpot Professional doesn't offer them, so growing means moving to Enterprise (matchup 1).`;
-  const fill = (v: number, min: number, maxV: number) => `${((v - min) / (maxV - min)) * 100}%`;
+  const excluded = cost.excluded.filter((e) => industry.field || !e.fieldOnly);
+  const ledger = useRef<HTMLDivElement>(null);
+  const seen = useInView(ledger, { once: true, amount: 0.3 });
+  const width = (n: number) => (seen ? `${(n / max) * 100}%` : '0%');
 
   return (
-    <div className="glass-strong mt-4 p-6 sm:p-8">
-      <p className="kicker-dark">The tier jump</p>
-      <div className="mt-3 grid gap-6 lg:grid-cols-[1fr_1.1fr] lg:items-center">
-        <div>
-          <h4 className="text-[24px] font-extrabold leading-tight sm:text-[30px]">
-            The capabilities a growing services business needs sit in HubSpot&apos;s top tier.
-          </h4>
-          <p className="mt-3 text-[17px] text-night-dim">
-            Custom objects, a sandbox and field-level permissions are Enterprise-only at HubSpot
-            <Footnote id="hs-catalog-products" />. Salesforce Pro Suite includes custom objects and a sandbox
-            <Footnote id="sf-pricing-sales" />.
-          </p>
-        </div>
-        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-2xl bg-white/5 p-4 ring-1 ring-white/10 sm:p-5">
-          <div className="text-center">
-            <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#b9c0cc]">HubSpot Pro</p>
-            <p className="text-[34px] font-extrabold tabular-nums text-[#e6e9ef] sm:text-[40px]">${jump.from}</p>
+    <div className="glass-strong mt-4 p-5 sm:p-8">
+      <TierJump />
+
+      <form className="mt-8 grid gap-3 sm:grid-cols-3" onSubmit={(e) => e.preventDefault()} aria-label="Cost scenario">
+        {(['salesSeats', 'serviceSeats'] as const).map((k) => {
+          const rg = cost.inputs[k];
+          return (
+            <label key={k} className="block rounded-2xl bg-white/[.05] px-4 py-3.5 ring-1 ring-white/10">
+              <span className="flex items-center justify-between text-[15px] font-bold">
+                <span className="flex items-center gap-2">
+                  <Users size={15} className="text-sf-sky" aria-hidden />
+                  {k === 'salesSeats' ? 'Sales users' : 'Service users'}
+                </span>
+                <span className="rounded-md bg-sf-electric/30 px-2 py-0.5 tabular-nums text-white">{seats[k]}</span>
+              </span>
+              <input
+                type="range"
+                className="range mt-3"
+                min={rg.min}
+                max={rg.max}
+                step={rg.step}
+                value={seats[k]}
+                style={{ ['--fill' as string]: fill(seats[k], rg.min, rg.max) }}
+                onChange={(e) => {
+                  setSeats((s) => ({ ...s, [k]: Number(e.target.value) }));
+                  track('calc_change', { field: k });
+                }}
+              />
+            </label>
+          );
+        })}
+        <fieldset className="rounded-2xl bg-white/[.05] px-4 py-3.5 ring-1 ring-white/10">
+          <legend className="sr-only">Contract length</legend>
+          <span className="flex items-center gap-2 text-[15px] font-bold" aria-hidden>
+            <CalendarDays size={15} className="text-sf-sky" /> Contract length
+          </span>
+          <div className="mt-2.5 grid grid-cols-4 gap-1.5">
+            {cost.inputs.years.options.map((y) => (
+              <button
+                key={y}
+                type="button"
+                aria-pressed={years === y}
+                onClick={() => {
+                  setYears(y);
+                  track('calc_change', { field: 'years' });
+                }}
+                className={`rounded-lg py-1.5 text-[15px] font-bold transition-colors ${years === y ? 'bg-sf-cloud text-[#020818]' : 'bg-white/10 hover:bg-white/20'}`}
+              >
+                {y} yr
+              </button>
+            ))}
           </div>
-          <ArrowRight className="text-[#b9c0cc]" aria-hidden />
-          <div className="text-center">
-            <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#b9c0cc]">HubSpot Enterprise</p>
-            <p className="text-[34px] font-extrabold tabular-nums text-[#e6e9ef] sm:text-[40px]">
-              ${jump.to}
-              <span className="ml-1 align-middle text-[15px] font-bold text-[#b9c0cc]">+{jump.pct}%</span>
+        </fieldset>
+      </form>
+
+      <div ref={ledger} className="mt-4 rounded-2xl bg-white/[.03] p-4 ring-1 ring-white/10 sm:p-6" aria-live="polite">
+        <div className={COLS}>
+          <div className="text-right">
+            <p className="text-[12.5px] font-extrabold uppercase tracking-[0.16em] text-sf-sky">Salesforce</p>
+            <Money value={r.salesforce} className="mt-1 block text-[28px] font-extrabold leading-none text-white sm:text-[44px]" />
+            <p className="mt-1.5 text-[13.5px] font-semibold text-[#d5e3f7]">${perUser(r.salesforce)} per user per month, all in</p>
+          </div>
+          <div className={`${MID} order-first text-center lg:order-none`}>
+            <span className="mx-auto grid h-11 w-11 place-items-center rounded-full bg-white text-[14px] font-extrabold text-sf-blue shadow-[0_0_24px_rgba(127,211,255,.55)]">vs</span>
+            <p className="mt-2 text-[13px] font-extrabold uppercase tracking-[0.14em] text-white">
+              {years}-year total, at list
+            </p>
+            <p className="text-[13px] text-night-dim">
+              {users}, same scope
             </p>
           </div>
-          <p className="col-span-3 rounded-xl bg-gradient-to-r from-sf-electric to-sf-blue px-4 py-3 text-center text-[16px] font-bold text-white">
-            Salesforce Pro Suite: ${jump.sf} per user per month, custom objects and sandbox included
-            <Footnote id="sf-pricing-sales" />
+          <div className="text-left">
+            <p className="text-[12.5px] font-extrabold uppercase tracking-[0.16em] text-[#b9c0cc]">HubSpot stack</p>
+            <Money value={r.hubspot} className="mt-1 block text-[28px] font-extrabold leading-none text-[#e6e9ef] sm:text-[44px]" />
+            <p className="mt-1.5 text-[13.5px] font-semibold text-[#b9c0cc]">${perUser(r.hubspot)} per user per month, all in</p>
+          </div>
+
+          <div className="flex h-6 justify-end">
+            <motion.div
+              className="h-full rounded-l-full bg-gradient-to-l from-sf-cloud to-sf-electric shadow-[0_0_22px_rgba(0,179,255,.6)]"
+              initial={{ width: '0%' }}
+              animate={{ width: width(r.salesforce) }}
+              transition={{ type: 'spring', stiffness: 90, damping: 20 }}
+            />
+          </div>
+          <p className="hidden text-center text-[12.5px] font-bold uppercase tracking-[0.14em] text-night-dim lg:block">
+            One price <span className="text-white/40">|</span> Stacked
           </p>
-          <p className="col-span-3 text-center text-[13px] text-[#b9c0cc]">
-            Per user per month. Plus a required onboarding fee per HubSpot hub
-            <Footnote id="hs-pricing-sales" tone="gray" />.
-          </p>
+          <div className="flex h-6 justify-start">
+            <motion.div
+              className="flex h-full gap-[2px] overflow-hidden rounded-r-full"
+              initial={{ width: '0%' }}
+              animate={{ width: width(r.hubspot) }}
+              transition={{ type: 'spring', stiffness: 90, damping: 20 }}
+            >
+              <AnimatePresence initial={false}>
+                {r.stack
+                  .filter((l) => l.amount > 0)
+                  .map((l) => (
+                    <motion.span
+                      key={l.id}
+                      className="h-full"
+                      style={{ background: SEGMENT[l.id] }}
+                      initial={{ flexGrow: 0 }}
+                      animate={{ flexGrow: l.amount }}
+                      exit={{ flexGrow: 0 }}
+                      transition={{ type: 'spring', stiffness: 140, damping: 22 }}
+                    />
+                  ))}
+              </AnimatePresence>
+            </motion.div>
+          </div>
+        </div>
+
+        <div className="mt-5 space-y-2.5 border-t border-white/10 pt-4">
+          <div className={COLS}>
+            <div className="text-right">
+              <Money value={r.salesforce} className="text-[19px] font-extrabold text-white" />
+              <span className="mt-1 block text-[13.5px] font-semibold text-[#d5e3f7]">
+                ${cost.salesforce.seatPrice} per user per month × {r.seats}
+                <Footnote id={cost.salesforce.source} />
+              </span>
+            </div>
+            <p className={`${MID} order-first rounded-xl bg-white/[.06] px-3 py-2.5 text-center text-[14.5px] font-bold ring-1 ring-white/10 lg:order-none`}>Licenses</p>
+            <HsCost id="seats" amount={amount('seats')} text={`$${cost.hubspot.seatPrice} per user per month, top tier × ${r.seats}`} source={cost.hubspot.seatSource} />
+          </div>
+
+          <div className={COLS}>
+            <div className="flex flex-col items-end text-right">
+              <span className="flex items-center gap-1.5 rounded-full bg-sf-cloud/20 px-2.5 py-1 text-[12.5px] font-extrabold uppercase tracking-wider text-sf-sky ring-1 ring-sf-cloud/50">
+                <Check size={13} strokeWidth={3} aria-hidden /> None
+              </span>
+              <span className="mt-1 text-[13.5px] font-semibold text-[#d5e3f7]">No onboarding fee in the price</span>
+            </div>
+            <p className={`${MID} order-first rounded-xl bg-white/[.06] px-3 py-2.5 text-center text-[14.5px] font-bold ring-1 ring-white/10 lg:order-none`}>Required onboarding</p>
+            <HsCost
+              id="onboarding"
+              amount={amount('onboarding')}
+              text={`${usd(cost.hubspot.onboardingPerHub)} per hub × ${r.hubs}, one-time`}
+              source={cost.hubspot.onboardingSource}
+            />
+          </div>
+
+          {cost.needs.map((n) => {
+            const on = !!needs[n.id];
+            const monthly = needMonthly(n, pack);
+            return (
+              <div key={n.id} className={COLS}>
+                <SfIncluded text={n.salesforce} source={n.sfSource} on={on} />
+                <div className={`${MID} order-first lg:order-none`}>
+                  <Switch on={on} label={n.label} onClick={() => toggle(n.id)} />
+                  {n.packs && (
+                    <div className="mt-1.5 grid grid-cols-3 gap-1" role="radiogroup" aria-label="HubSpot credit pack">
+                      {n.packs.map((p) => (
+                        <button
+                          key={p.id}
+                          type="button"
+                          role="radio"
+                          aria-checked={pack === p.id}
+                          onClick={() => {
+                            setPack(p.id);
+                            setNeeds((s) => ({ ...s, [n.id]: true }));
+                            track('calc_change', { field: 'pack' });
+                          }}
+                          className={`rounded-lg px-1 py-1 text-[12px] font-bold leading-tight transition-colors ${
+                            on && pack === p.id ? 'bg-white text-sf-blue' : 'bg-white/[.07] text-night-dim hover:text-white'
+                          }`}
+                        >
+                          {p.label}
+                          <span className="block text-[11px] font-semibold opacity-80">{(p.credits / 1000).toLocaleString('en-US')}K/mo</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <HsCost id={n.id} amount={amount(n.id)} text={`${n.hubspot}, $${monthly.toLocaleString('en-US')} a month`} source={n.source} on={on} />
+              </div>
+            );
+          })}
+
+          <div className={COLS}>
+            <div className="flex flex-wrap justify-end gap-1.5">
+              {cost.salesforce.includes.slice(-3).map((i) => (
+                <span key={i.label} className="rounded-full bg-white/[.12] px-2.5 py-1 text-[12.5px] font-bold text-white ring-1 ring-white/20">
+                  {i.label}
+                  <Footnote id={i.source} />
+                </span>
+              ))}
+            </div>
+            <p className={`${MID} order-first rounded-xl bg-sf-electric/20 px-3 py-2.5 text-center text-[14.5px] font-bold text-white ring-1 ring-sf-cloud/40 lg:order-none`}>
+              Also in the license
+            </p>
+            <p className="text-[13.5px] font-semibold text-[#9aa2b1]">Not in the HubSpot total</p>
+          </div>
         </div>
       </div>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-[360px_1fr] lg:gap-8">
-        <div className="flex flex-col gap-4">
-        <form className="space-y-5 rounded-2xl bg-white/[.04] p-5 ring-1 ring-white/10" onSubmit={(e) => e.preventDefault()} aria-label="Cost scenario">
-          <p className="flex items-center gap-2 text-[12px] font-extrabold uppercase tracking-[0.18em] text-sf-sky">
-            <SlidersHorizontal size={14} aria-hidden /> Your scenario
-          </p>
-          {(['salesSeats', 'serviceSeats'] as const).map((k) => {
-            const r = cost.inputs[k];
-            return (
-              <label key={k} className="block">
-                <span className="flex justify-between text-[15px] font-bold">
-                  {k === 'salesSeats' ? 'Sales users' : 'Service users'}
-                  <span className="tabular-nums text-sf-sky">{inp[k]}</span>
-                </span>
-                <input
-                  type="range"
-                  className="range mt-2"
-                  min={r.min}
-                  max={r.max}
-                  step={r.step}
-                  value={inp[k]}
-                  style={{ ['--fill' as string]: fill(inp[k], r.min, r.max) }}
-                  onChange={(e) => set(k, Number(e.target.value))}
-                />
-              </label>
-            );
-          })}
-          <fieldset>
-            <legend className="text-[15px] font-bold">Contract length</legend>
-            <div className="mt-2 flex gap-2">
-              {cost.inputs.years.options.map((y) => (
-                <button
-                  key={y}
-                  type="button"
-                  aria-pressed={inp.years === y}
-                  onClick={() => set('years', y)}
-                  className={`flex-1 rounded-lg px-3 py-2 text-[15px] font-bold ${inp.years === y ? 'bg-sf-cloud text-[#020818]' : 'bg-white/10 hover:bg-white/20'}`}
-                >
-                  {y} yr
-                </button>
-              ))}
-            </div>
-          </fieldset>
-            <label className="flex cursor-pointer items-start gap-3 rounded-xl bg-white/5 p-3.5 text-[15px] ring-1 ring-white/10">
-            <input
-              type="checkbox"
-              className="mt-1 h-4 w-4 accent-[#0176d3]"
-              checked={integrate}
-              onChange={(e) => {
-                setInp((st) => ({ ...st, includeDataHub: e.target.checked, includeSfApiAddon: e.target.checked }));
-                track('calc_change', { field: 'integrate' });
-              }}
-            />
-            <span>
-              <span className="font-bold">We&apos;ll connect our ERP or data warehouse (two-way)</span>
-              <span className="mt-1 block text-[13.5px] text-night-dim">
-                Adds what each side requires: HubSpot Data Hub Enterprise, $2,000 a month
-                <Footnote id="hs-pricing-data" />, and the Salesforce Web Services API add-on, $25 per user per month on Pro Suite
-                <Footnote id="sf-pricing-sales" />.
-              </span>
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={v.kind}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          className={`mt-4 flex flex-col items-center gap-3 rounded-2xl px-5 py-4 text-center sm:flex-row sm:text-left ${
+            v.kind === 'under' ? 'card-sf-dark' : 'bg-sf-electric/20 ring-1 ring-sf-cloud/40'
+          }`}
+        >
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-white text-sf-blue">
+            <Scale size={20} aria-hidden />
+          </span>
+          <p className="flex-1 text-[17px] font-bold leading-snug text-white sm:text-[18.5px]">{v.text}</p>
+          {v.kind === 'under' && (
+            <span className="shrink-0 rounded-full bg-white px-4 py-1.5 text-[15px] font-extrabold tabular-nums text-sf-blue">
+              <Money value={v.diff} /> under
             </span>
-          </label>
-        </form>
+          )}
+        </motion.div>
+      </AnimatePresence>
 
-        <div className="flex flex-1 flex-col rounded-2xl bg-white/[.04] p-5 ring-1 ring-white/10">
+      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+        <div className="flex flex-col rounded-2xl bg-white/[.04] p-5 ring-1 ring-white/10">
           <p className="flex items-center gap-2 text-[12px] font-extrabold uppercase tracking-[0.18em] text-[#b9c0cc]">
             <EyeOff size={14} aria-hidden /> Not in the quote
           </p>
           <p className="mt-2 text-[16px] font-extrabold leading-snug">{cost.hiddenCosts.title}</p>
-          <ul className="mt-3 space-y-2.5 text-[14.5px] leading-snug text-[#cfd4de]">
-            {cost.hiddenCosts.items.filter((h) => industry.field || !cost.hiddenCosts.fieldOnly.includes(h)).map((h) => (
-              <li key={h} className="flex gap-2.5">
-                <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#8a93a6]" aria-hidden />
-                {h}
-              </li>
-            ))}
+          <ul className="mt-3 grid flex-1 content-start gap-x-4 gap-y-2 text-[14.5px] leading-snug text-[#cfd4de] sm:grid-cols-2">
+            {cost.hiddenCosts.items
+              .filter((h) => industry.field || !cost.hiddenCosts.fieldOnly.includes(h))
+              .map((h) => (
+                <li key={h} className="flex gap-2.5">
+                  <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#8a93a6]" aria-hidden />
+                  {h}
+                </li>
+              ))}
           </ul>
-          <div className="mt-auto pt-5">
-            <div className="rounded-xl bg-gradient-to-br from-sf-electric/35 to-sf-blue/20 p-4 ring-1 ring-sf-cloud/40">
-              <p className="flex items-center gap-2 text-[12px] font-extrabold uppercase tracking-[0.16em] text-sf-sky">
-                <MessageSquareQuote size={14} aria-hidden /> Ask HubSpot
-              </p>
-              <p className="mt-1.5 text-[14.5px] font-semibold leading-snug text-white">“{checkById('cost').askLive}”</p>
-            </div>
-          </div>
         </div>
-        </div>
-
-        <div>
-          <div className="space-y-4" aria-live="polite">
-            <Matchup
-              n={1}
-              best
-              kicker="Same capabilities"
-              title="Custom objects and a sandbox on both sides"
-              sf={sfSide}
-              hs={{
-                r: by['hs-ent'],
-                price: `$${seat['hs-ent']} per user per month${integrate ? ' + Data Hub $2,000 a month' : ''}`,
-                have: ['Custom objects', 'Sandbox'],
-                extra: `${usd(by['hs-ent'].oneTime)} onboarding`,
-                source: 'hs-catalog-products',
-              }}
-              verdict={lessBy(by['hs-ent'])}
-            />
-            <Matchup
-              n={2}
-              kicker="Entry tiers"
-              title="What each entry tier includes"
-              sf={sfSide}
-              hs={{
-                r: by['hs-pro'],
-                price: `$${seat['hs-pro']} per user per month`,
-                lack: ['Custom objects', 'Sandbox', 'Field-level permissions', ...(integrate ? ['Two-way warehouse sync'] : [])],
-                extra: `${usd(by['hs-pro'].oneTime)} onboarding`,
-                source: 'hs-pricing-sales',
-              }}
-              verdict={entryVerdict}
-            />
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-2xl bg-white/5 px-5 py-4 ring-1 ring-white/10">
-              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-sf-electric/30 text-sf-sky ring-1 ring-sf-cloud/40">
-                <ArrowUpRight size={18} aria-hidden />
+        <div className="flex flex-col rounded-2xl bg-gradient-to-br from-sf-electric/35 to-sf-blue/20 p-5 ring-1 ring-sf-cloud/40">
+          <p className="flex items-center gap-2 text-[12px] font-extrabold uppercase tracking-[0.16em] text-sf-sky">
+            <MessageSquareQuote size={14} aria-hidden /> Ask HubSpot
+          </p>
+          <p className="flex flex-1 items-center py-4 text-[19px] font-bold leading-snug text-white sm:text-[22px]">“{checkById('cost').askLive}”</p>
+          <p className="rounded-xl bg-white/10 px-3.5 py-2.5 text-[13.5px] text-[#d5e3f7]">
+            Not in this comparison:{' '}
+            {excluded.map((e, i) => (
+              <span key={e.label}>
+                {i > 0 && ' and '}
+                {e.label}
+                <Footnote id={e.source} />
               </span>
-              <div className="min-w-0 flex-1">
-                <p className="text-[15.5px] font-extrabold">
-                  The step up: Salesforce Core
-                  <Footnote id="sf-pricing-sales" />
-                </p>
-                <p className="text-[13.5px] text-night-dim">${seat['sf-core']} per user per month · Includes 500K Flex Credits per org.</p>
-              </div>
-              <p className="text-[19px] font-extrabold tabular-nums">
-                {usd(by['sf-core'].total)}
-                <span className="ml-1 text-[13px] font-semibold text-night-dim">/ {yrs}</span>
-              </p>
-            </div>
-          </div>
-          <p className="mt-5 flex gap-2 rounded-xl bg-white/5 px-4 py-3 text-[14px] text-[#d5e3f7] ring-1 ring-white/10">
-            <Info size={16} className="mt-0.5 shrink-0 text-sf-sky" aria-hidden />
-            <span>{DISCLAIMER}</span>
+            ))}
+            . {excluded.length > 1 ? 'Both are' : "It's an"} add-on{excluded.length > 1 ? 's' : ''} on either side.
           </p>
         </div>
       </div>
 
+      <p className="mt-4 flex gap-2 rounded-xl bg-white/5 px-4 py-3 text-[14px] text-[#d5e3f7] ring-1 ring-white/10">
+        <Info size={16} className="mt-0.5 shrink-0 text-sf-sky" aria-hidden />
+        <span>
+          {DISCLAIMER} {cost.disclosure}
+        </span>
+      </p>
     </div>
   );
 }

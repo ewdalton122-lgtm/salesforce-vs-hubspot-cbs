@@ -1,61 +1,94 @@
-export type CalcOption = {
+export type Need = {
   id: string;
-  vendor: 'HubSpot' | 'Salesforce';
   label: string;
-  seatPrice: number;
-  onboardingPerHub?: number;
-  addons?: Record<string, { monthly?: number; perSeatMonthly?: number }>;
+  hubspot: string;
+  monthly?: number;
+  packs?: { id: string; label: string; credits: number; monthly: number }[];
 };
 
-export type CalcInputs = {
+export type TcoConfig = {
+  salesforce: { seatPrice: number; extras: string[] };
+  hubspot: { seatPrice: number; onboardingPerHub: number };
+  needs: Need[];
+};
+
+export type TcoInputs = {
   salesSeats: number;
   serviceSeats: number;
   years: number;
-  includeDataHub: boolean;
-  includeSfApiAddon: boolean;
+  needs: Record<string, boolean>;
+  pack: string;
 };
 
-export type CalcResult = {
-  id: string;
-  vendor: CalcOption['vendor'];
-  label: string;
-  annual: number;
-  oneTime: number;
-  total: number;
+export type StackLine = { id: string; amount: number; monthly?: number };
+
+export type TcoResult = {
+  seats: number;
+  months: number;
+  hubs: number;
+  salesforce: number;
+  hubspot: number;
+  stack: StackLine[];
 };
+
+export const needMonthly = (n: Need, pack: string) => (n.packs ? (n.packs.find((p) => p.id === pack) ?? n.packs[0]).monthly : (n.monthly ?? 0));
 
 /**
  * cost-calculator.json formula:
- * annual = seats * seatPrice * 12 + addonMonthly * 12 + addonPerSeatMonthly * seats * 12
- * total  = annual * years + onboardingPerHub * hubs   (one-time, HubSpot only; hubs = hubs with seats > 0)
+ * salesforce = seats * seatPrice * 12 * years
+ * hubspot    = seats * seatPrice * 12 * years + onboardingPerHub * hubs (one-time) + sum(need monthly) * 12 * years
  */
-export function computeOption(opt: CalcOption, inp: CalcInputs): CalcResult {
+export function computeTco(cfg: TcoConfig, inp: TcoInputs): TcoResult {
   const seats = inp.salesSeats + inp.serviceSeats;
-  let addonMonthly = 0;
-  let addonPerSeatMonthly = 0;
-  const flags: Record<string, boolean> = { includeDataHub: inp.includeDataHub, includeSfApiAddon: inp.includeSfApiAddon };
-  for (const [flag, a] of Object.entries(opt.addons ?? {})) {
-    if (!flags[flag]) continue;
-    addonMonthly += a.monthly ?? 0;
-    addonPerSeatMonthly += a.perSeatMonthly ?? 0;
-  }
-  const annual = seats * opt.seatPrice * 12 + addonMonthly * 12 + addonPerSeatMonthly * seats * 12;
+  const months = inp.years * 12;
   const hubs = (inp.salesSeats > 0 ? 1 : 0) + (inp.serviceSeats > 0 ? 1 : 0);
-  const oneTime = opt.vendor === 'HubSpot' ? (opt.onboardingPerHub ?? 0) * hubs : 0;
-  return { id: opt.id, vendor: opt.vendor, label: opt.label, annual, oneTime, total: annual * inp.years + oneTime };
+  const stack: StackLine[] = [
+    { id: 'seats', amount: seats * cfg.hubspot.seatPrice * months },
+    { id: 'onboarding', amount: hubs * cfg.hubspot.onboardingPerHub },
+    ...cfg.needs.filter((n) => inp.needs[n.id]).map((n) => {
+      const monthly = needMonthly(n, inp.pack);
+      return { id: n.id, amount: monthly * months, monthly };
+    }),
+  ];
+  return {
+    seats,
+    months,
+    hubs,
+    salesforce: seats * cfg.salesforce.seatPrice * months,
+    hubspot: stack.reduce((s, l) => s + l.amount, 0),
+    stack,
+  };
 }
 
-export function computeAll(options: CalcOption[], inp: CalcInputs): CalcResult[] {
-  return options.map((o) => computeOption(o, inp));
+export type Verdict =
+  | { kind: 'under'; diff: number; pct: number; text: string }
+  | { kind: 'more'; perUserMonth: number; text: string };
+
+const list = (items: string[]) => (items.length < 3 ? items.join(' and ') : `${items.slice(0, -1).join(', ')} and ${items[items.length - 1]}`);
+
+/** Scoped to the user's picks and list prices; never an overall "cheaper" claim. */
+export function tcoVerdict(cfg: TcoConfig, r: TcoResult, years: number): Verdict {
+  const yrs = `${years} ${years === 1 ? 'year' : 'years'}`;
+  if (r.salesforce <= r.hubspot) {
+    const diff = r.hubspot - r.salesforce;
+    return {
+      kind: 'under',
+      diff,
+      pct: Math.round((diff / r.hubspot) * 100),
+      text: `For what you picked, one Salesforce license comes in ${usd(diff)} under the HubSpot stack over ${yrs}, at list.`,
+    };
+  }
+  const perUserMonth = Math.ceil((r.salesforce - r.hubspot) / (r.seats * r.months));
+  return {
+    kind: 'more',
+    perUserMonth,
+    text: `About $${perUserMonth} more per user per month at list, and the license includes ${list(cfg.salesforce.extras)}. None of them are in the HubSpot total.`,
+  };
 }
 
-/** The tier jump the cost check headlines: HubSpot's entry tier seat price vs. the tier with the capabilities. */
-export function tierJump(options: CalcOption[]) {
-  const pro = options.find((o) => o.id === 'hs-pro');
-  const ent = options.find((o) => o.id === 'hs-ent');
-  const sf = options.find((o) => o.id === 'sf-pro');
-  if (!pro || !ent || !sf) throw new Error('cost-calculator.json is missing hs-pro, hs-ent or sf-pro');
-  return { from: pro.seatPrice, to: ent.seatPrice, pct: Math.round(((ent.seatPrice - pro.seatPrice) / pro.seatPrice) * 100), sf: sf.seatPrice };
+/** HubSpot's entry tier seat vs. the top tier, where custom objects, sandboxes and field-level permissions live. */
+export function tierJump({ entrySeat, topSeat }: { entrySeat: number; topSeat: number }) {
+  return { from: entrySeat, to: topSeat, pct: Math.round(((topSeat - entrySeat) / entrySeat) * 100) };
 }
 
 export const usd = (n: number) => n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
