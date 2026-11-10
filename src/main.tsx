@@ -5,6 +5,7 @@ import './styles/index.css';
 import { AppProvider } from './context/AppContext';
 import Home from './pages/Home';
 import Checklist from './pages/Checklist';
+import Team from './pages/Team';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -12,6 +13,7 @@ createRoot(document.getElementById('root')!).render(
       <HashRouter>
         <Routes>
           <Route path="/checklist" element={<Checklist />} />
+          <Route path="/team" element={<Team />} />
           <Route path="*" element={<Home />} />
         </Routes>
       </HashRouter>

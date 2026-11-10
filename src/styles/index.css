@@ -586,3 +586,23 @@ input[type='range'].range.bright {
     justify-content: center;
   }
 }
+
+/* Team contact rings */
+.team-ring {
+  isolation: isolate;
+  box-shadow: 0 0 40px rgba(0, 179, 255, 0.35);
+}
+.team-ring::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 9999px;
+  background: conic-gradient(from 0deg, #0176d3, #00b3ff, #90d0fe, #ffffff, #0176d3);
+  animation: team-spin 6s linear infinite;
+}
+.team-ring-sm { padding: 2px; }
+@keyframes team-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .team-ring::before { animation: none; }
+}

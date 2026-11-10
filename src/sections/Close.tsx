@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
-import { CalendarDays, Mail, Phone, PlayCircle, Printer } from 'lucide-react';
-import { site } from '../lib/content';
+import { ArrowRight, ArrowUpRight, CalendarDays, Mail, Phone, PlayCircle, Printer, Users } from 'lucide-react';
+import { site, team } from '../lib/content';
 import { asset, sellerFor, track } from '../lib/env';
 import { useApp } from '../context/AppContext';
 
@@ -18,7 +18,7 @@ export default function Close() {
         </h2>
         <p className="mx-auto mt-6 max-w-[720px] text-[20px] text-night-dim sm:text-[23px]">{site.close.sub}</p>
 
-        <div className={`mx-auto mt-12 max-w-[640px] text-left ${hasSeller ? 'glass-strong p-7' : ''}`}>
+        <div className={`mx-auto mt-12 ${hasSeller ? 'glass-strong max-w-[640px] p-7 text-left' : 'max-w-[860px]'}`}>
           {hasSeller ? (
             <>
               <p className="text-[24px] font-extrabold">{s.name}</p>
@@ -42,14 +42,41 @@ export default function Close() {
               </div>
             </>
           ) : (
-            <div className="flex flex-wrap justify-center gap-3">
-              <Link to="/checklist" className="btn-primary">
-                <Printer size={17} aria-hidden /> Take the 5-check checklist to your demos
+            <>
+              <Link
+                to="/team"
+                onClick={() => track('cta_team')}
+                className="group mx-auto flex w-fit max-w-full items-center gap-4 rounded-full bg-white/[.07] py-2 pl-2 pr-5 ring-1 ring-white/15 transition hover:bg-white/[.12] hover:ring-sf-sky/60"
+              >
+                <span className="flex shrink-0 -space-x-3">
+                  {team.contacts.map((c) => (
+                    <span key={c.email} className="team-ring team-ring-sm relative grid h-12 w-12 place-items-center rounded-full">
+                      <img src={asset(c.photo)} alt="" className="h-full w-full rounded-full bg-white object-cover" />
+                    </span>
+                  ))}
+                </span>
+                <span className="min-w-0 text-left leading-tight">
+                  <span className="block text-[15px] font-extrabold">{team.contacts.map((c) => c.name).join(' & ')}</span>
+                  <span className="hidden text-[13px] text-night-dim sm:block">{team.contacts.map((c) => c.role).join(' · ')}</span>
+                  <span className="block text-[13px] text-night-dim sm:hidden">{team.kicker}</span>
+                </span>
+                <ArrowRight size={18} aria-hidden className="shrink-0 text-sf-sky transition group-hover:translate-x-1" />
               </Link>
-              <button type="button" className="btn-ghost" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-                <PlayCircle size={17} aria-hidden /> Watch the video again
-              </button>
-            </div>
+              <div className="mx-auto mt-6 grid gap-3 sm:grid-cols-2">
+                <Link to="/team" className="btn-primary justify-center" onClick={() => track('cta_team')}>
+                  <Users size={17} aria-hidden /> Meet your Salesforce team
+                </Link>
+                <a className="btn-ghost justify-center" href={team.salesforce.url} target="_blank" rel="noopener noreferrer" onClick={() => track('cta_salesforce_contact')}>
+                  {team.salesforce.label} <ArrowUpRight size={17} aria-hidden />
+                </a>
+                <Link to="/checklist" className="btn-primary justify-center">
+                  <Printer size={17} aria-hidden /> Take the 5-check checklist to your demos
+                </Link>
+                <button type="button" className="btn-ghost justify-center" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+                  <PlayCircle size={17} aria-hidden /> Watch the video again
+                </button>
+              </div>
+            </>
           )}
         </div>
       </div>

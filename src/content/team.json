@@ -1,0 +1,31 @@
+{
+  "_note": "Contact page (#/team) and the close-section team strip. These two cover every services account team, so the page works for any AE's customers. Photos live in public/assets/images/team/.",
+  "kicker": "Your Salesforce team",
+  "title": "Talk to real people.",
+  "titleAccent": "We cover every account.",
+  "sub": "Questions about the five checks, a live demo on your data, or a proof of concept? Email either of us, or both.",
+  "emailSubject": "Salesforce vs. HubSpot: let's talk",
+  "contacts": [
+    {
+      "name": "Eric Dalton",
+      "first": "Eric",
+      "role": "Lead Solutions Engineer",
+      "focus": "Live demos and proofs of concept on your data, across all five checks.",
+      "email": "edalton@salesforce.com",
+      "photo": "assets/images/team/eric.jpg"
+    },
+    {
+      "name": "Grant Stephens",
+      "first": "Grant",
+      "role": "RVP, Sales",
+      "focus": "Your executive sponsor for the evaluation, from first call to decision.",
+      "email": "gstephens@salesforce.com",
+      "photo": "assets/images/team/grant.jpg"
+    }
+  ],
+  "salesforce": {
+    "label": "Contact Salesforce",
+    "text": "Prefer to start with Salesforce directly? Reach the sales team through the official contact page.",
+    "url": "https://www.salesforce.com/company/contact-us/"
+  }
+}

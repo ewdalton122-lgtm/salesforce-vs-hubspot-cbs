@@ -14,6 +14,7 @@ import platformJson from '../content/platform.json';
 import demoPathsJson from '../content/demoPaths.json';
 import simulatorJson from '../content/simulator.json';
 import siteJson from '../content/site.json';
+import teamJson from '../content/team.json';
 
 const SourceSchema = z.object({
   label: z.string(),
@@ -199,6 +200,14 @@ export const growth = GrowthSchema.parse(growthJson);
 export const platform = PlatformSchema.parse(platformJson);
 export const demoPaths = DemoPathsSchema.parse(demoPathsJson).paths;
 export const simulator = SimulatorSchema.parse(simulatorJson);
+
+const TeamSchema = z.object({
+  kicker: z.string(), title: z.string(), titleAccent: z.string(), sub: z.string(), emailSubject: z.string(),
+  contacts: z.array(z.object({ name: z.string(), first: z.string(), role: z.string(), focus: z.string(), email: z.string().email(), photo: z.string() })).min(1),
+  salesforce: z.object({ label: z.string(), text: z.string(), url: z.string().url() }),
+});
+export const team = TeamSchema.parse(teamJson);
+export const mailto = (emails: string[]) => `mailto:${emails.join(',')}?subject=${encodeURIComponent(team.emailSubject)}`;
 export const site = siteJson;
 
 export type Source = z.infer<typeof SourceSchema>;
