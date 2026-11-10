@@ -1,0 +1,20 @@
+{
+  "_note": "Back of each 'Ask HubSpot' card: what Salesforce shows live. Public Salesforce capabilities only. Never include the internal seller guide's coaching or 'what it exposes' notes.",
+  "paths": {
+    "1": [
+      { "text": "Custom objects for your projects, work orders, job orders or matters, with lookup and master-detail relationships", "source": "sf-data-model" },
+      { "text": "A multi-level account hierarchy, with an acquired brand added on day one", "source": "sf-data-model" },
+      { "text": "Record types: a separate process per line of business", "source": "sf-data-model" }
+    ],
+    "2": [
+      { "text": "Revenue Cloud: quote, approval, contract and billing on one data model", "source": "sf-revenue-cloud" },
+      { "text": "Handoff to Service Cloud, then Field Service scheduling, dispatch and the mobile app", "source": "sf-field-service" },
+      { "text": "Agentforce Voice answering an after-hours call and creating the work order", "source": "sf-agentforce-voice" }
+    ],
+    "3": [
+      { "text": "Data 360 with Zero Copy from your warehouse, plus MuleSoft for the rest", "source": "sf-q2-fy27" },
+      { "text": "Agentforce grounded on that data, inside your guardrails", "source": "sf-agentforce-docs" },
+      { "text": "Testing Center, agent versions with rollback, and the Einstein Trust Layer", "source": "sf-agentforce-docs" }
+    ]
+  }
+}

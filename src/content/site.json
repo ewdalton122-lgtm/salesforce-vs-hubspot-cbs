@@ -1,0 +1,55 @@
+{
+  "_note": "Site copy. Hero and close lines mirror the v4 video word for word. csmCitation mirrors the video's on-screen footer (Script_and_Claims_v4.docx); confirm with #marketinglegal before launch.",
+  "meta": {
+    "title": "Salesforce vs. HubSpot for Services Businesses | 5 Checks Before You Choose a CRM",
+    "description": "See how Salesforce and HubSpot compare on your data model, the cost of growing, operations after the sale, governance and AI for growing services businesses."
+  },
+  "banner": { "title": "Built to Scale", "subtitle": "Salesforce vs. HubSpot for services businesses", "cta": "See it on your data" },
+  "video": {
+    "master": { "src": "assets/video/salesforce-vs-hubspot-master-v4.mp4", "captions": "assets/video/salesforce-vs-hubspot-master-v4.en.vtt", "poster": "assets/video/poster-agenda-v4.jpg", "length": "4 minutes 23 seconds" },
+    "social": { "src": "assets/video/salesforce-vs-hubspot-social-v4.mp4", "captions": "assets/video/salesforce-vs-hubspot-social-v4.en.vtt", "poster": "assets/video/poster-agenda-v4.jpg", "length": "4 minutes 9 seconds" },
+    "label": "Salesforce vs. HubSpot: Built to Scale",
+    "cue": "See the 5 checks",
+    "cueLit": "Up next",
+    "cueLeadSeconds": 15
+  },
+  "hero": {
+    "kicker": "For growing services businesses",
+    "title": "The tools that got you started",
+    "titleAccent": "won't take you where you're going.",
+    "sub": "Before you choose a CRM, run five checks. Watch your own business grow, and see how Salesforce and HubSpot handle every stage.",
+    "primary": "Start the story",
+    "secondary": "Ask HubSpot to prove it"
+  },
+  "reality": {
+    "kicker": "Consumer business services",
+    "title": "Your CRM isn't",
+    "titleAccent": "just for sales.",
+    "body": "If you run a services business, your CRM has to keep up with acquisitions, crews in the field, phones that never stop ringing, and the ERP that bills it all.",
+    "pick": "Pick your business. The whole story adapts to it.",
+    "pressures": ["Acquisitions", "Field crews", "Contact center", "ERP & billing"],
+    "closing": "Plenty of tools are easy to start.",
+    "closingAccent": "Salesforce is built to scale."
+  },
+  "proof": {
+    "kicker": "Proof",
+    "title": "Proof it",
+    "titleAccent": "pays off.",
+    "socialTitle": "Services businesses growing on Salesforce.",
+    "csmCitation": "Source: 2026 Salesforce Success Metrics. Engineering, Construction & Real Estate Highlights (369 customers); Professional Services Highlights (222); Field Service and Customer Service persona results (151; 178). Aggregated across 9 countries.",
+    "storyCta": "Ask your Salesforce team for the full story.",
+    "storyFooter": "Salesforce customer story"
+  },
+  "close": {
+    "title": "Easy to start is good.",
+    "titleAccent": "Built to scale is better.",
+    "sub": "Talk to your Salesforce account team. We'll show you all five checks, live, on your data.",
+    "fallbackContact": "Talk to your Salesforce account team."
+  },
+  "legal": {
+    "trademark": "Salesforce, Agentforce, Slack, MuleSoft, Tableau, Data 360 and others are trademarks of Salesforce, Inc. HubSpot is a trademark of HubSpot, Inc. Other marks belong to their respective owners. This page is not affiliated with or endorsed by HubSpot.",
+    "disclaimer": "Comparisons are based on publicly available information as of the dates shown and may change. Prices are list prices, billed annually, and exclude discounts, services and third-party apps.",
+    "phrasing": "Where a capability isn't offered natively or isn't documented, we say so. We don't say a product \"can't\" do something, because partners and custom builds can often fill gaps, at extra cost and complexity.",
+    "copyright": "© 2026 Salesforce, Inc. Features and pricing as of November 2026."
+  }
+}

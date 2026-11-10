@@ -1,0 +1,25 @@
+{
+  "_note": "Public sources from the Claude research brief that the Mesh kit's sources.json does not include. Same shape as sources.json. Every footnote on the site resolves to sources.json or this file.",
+  "sources": {
+    "hs-pricing-service": {
+      "label": "HubSpot pricing: Service Hub",
+      "url": "https://www.hubspot.com/pricing/service",
+      "asOf": "2026-11"
+    },
+    "hs-catalog-addons": {
+      "label": "HubSpot Product & Services Catalog: Add-ons",
+      "url": "https://legal.hubspot.com/hubspot-product-and-services-catalog/add-ons",
+      "asOf": "2026-11"
+    },
+    "sf-service-pricing": {
+      "label": "Salesforce Service Cloud pricing",
+      "url": "https://www.salesforce.com/service/pricing/",
+      "asOf": "2026-11"
+    },
+    "sf-slackbot": {
+      "label": "Salesforce newsroom: Slackbot announcement (Jan 13, 2026)",
+      "url": "https://www.salesforce.com/news/press-releases/2026/01/13/slackbot-announcement/",
+      "asOf": "2026-01"
+    }
+  }
+}

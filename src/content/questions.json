@@ -1,0 +1,25 @@
+{
+  "_note": "v4 'Ask HubSpot. Then ask us.' The section is aimed at HubSpot: each item pairs the question to ask HubSpot with how Salesforce proves it live. Tone is confident and factual, never snarky; gaps are framed as questions. Do NOT publish the internal 'what it exposes' notes (seller guide only).",
+  "title": "Ask HubSpot: can you prove it? Live, with our data.",
+  "subtitle": "Then ask us. Salesforce will show you, live, on your data.",
+  "framing": "Ask for a proof of concept on the first two. They're the hardest to fake in a demo.",
+  "videoAsks": [
+    { "n": 1, "askHubSpot": "Can you build our real objects, live?", "full": "Build our real objects in the demo (projects, work orders, job orders, matters, SOWs) and how they connect.", "salesforce": "Custom objects and account hierarchies, built live on your data.", "poc": true },
+    { "n": 2, "askHubSpot": "Can you run quote to service in one system?", "full": "Show the full path from quote to approval, contract, delivery handoff, execution, billing and service, and which parts need a separate product or integration.", "salesforce": "Revenue Cloud → Field Service → Service Cloud, on one platform.", "poc": true },
+    { "n": 3, "askHubSpot": "Can your AI use all our data, with guardrails?", "full": "Show how your AI uses data from outside the CRM (project, billing, scheduling, support) and what governs its actions and access.", "salesforce": "Agentforce on Data 360: tested, versioned, protected by the Einstein Trust Layer.", "poc": false }
+  ],
+  "topics": [
+    { "id": "data-model", "topic": "Data model flexibility", "askHubSpot": "Can you build our real objects (projects or pursuits, job orders and candidates, matters, SOWs, work orders) with the relationships between them, live, with our data?", "salesforce": "Yes. Custom objects with relationships, multi-level account hierarchies and record types per line of business." },
+    { "id": "tco", "topic": "Total cost at scale", "askHubSpot": "Can you give us a 3-year price that includes every capability we listed, the tier each requires, and how marketing contacts, seats and add-ons change the price as we grow?", "salesforce": "Yes. One platform you start small on and grow into. See the cost scenario below." },
+    { "id": "operations", "topic": "Operations after the sale", "askHubSpot": "Can you show the full path from quote to approval, contract, delivery handoff, execution, billing and service? Which parts need a separate product or integration?", "salesforce": "Yes. Revenue Cloud, Field Service, Service Cloud and Agentforce Voice on one platform." },
+    { "id": "governance", "topic": "Governance & control", "askHubSpot": "Can you show complex approval flows, role- and record-level security across business units, sandboxes and change management as we grow?", "salesforce": "Yes. Record-level security, role hierarchies, approval flows and sandboxes to test every change." },
+    { "id": "ai-data", "topic": "AI & data foundation", "askHubSpot": "Can your AI use our data from outside the CRM, and can you show tracing, testing and rollback when an agent gets something wrong?", "salesforce": "Yes. Data 360 with Zero Copy, Testing Center, agent versions with rollback, and the Einstein Trust Layer." }
+  ],
+  "moreQuestions": [
+    { "topic": "Integration", "askHubSpot": "Can you show a live two-way sync with our ERP, billing and dispatch systems? Is it native or custom, and who builds, monitors and fixes it?" },
+    { "topic": "Permissions", "askHubSpot": "How do we give sales, service, dispatch, finance and executives different access, and which tier does that require?" },
+    { "topic": "AI credits", "askHubSpot": "What happens when AI credits run out mid-month? Which agents are still in beta, and which beta features will start consuming credits?" },
+    { "topic": "Contact center", "askHubSpot": "Is your voice agent generally available? How do calls, transcripts and AI summaries land on the customer record?" },
+    { "topic": "Pricing stability", "askHubSpot": "If your pricing model is changing, what does our pricing look like in year two and at renewal?" }
+  ]
+}

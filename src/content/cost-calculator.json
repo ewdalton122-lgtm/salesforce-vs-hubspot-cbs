@@ -1,0 +1,38 @@
+{
+  "_note": "Interactive cost scenario. List prices, per user per month, billed annually, as of Nov 2026. No discounts, partner services or third-party apps. Show the assumptions and disclaimer beside the results at all times.",
+  "asOf": "2026-11",
+  "defaults": { "salesSeats": 30, "serviceSeats": 20, "years": 3 },
+  "inputs": {
+    "salesSeats": { "min": 1, "max": 500, "step": 1 },
+    "serviceSeats": { "min": 0, "max": 500, "step": 1 },
+    "years": { "options": [1, 2, 3, 5] },
+    "includeDataHub": { "default": false, "label": "Two-way warehouse sync (HubSpot needs Data Hub Enterprise)" },
+    "includeSfApiAddon": { "default": false, "label": "Salesforce Web Services API add-on (+$25/user/month on Pro Suite)" }
+  },
+  "options": [
+    { "id": "hs-pro", "vendor": "HubSpot", "label": "HubSpot Professional (Sales + Service)", "seatPrice": 90, "onboardingPerHub": 1500, "hubs": "count of hubs with seats > 0", "note": "Custom objects, sandbox and field-level permissions are NOT included at this tier." },
+    { "id": "hs-ent", "vendor": "HubSpot", "label": "HubSpot Enterprise (Sales + Service)", "seatPrice": 150, "onboardingPerHub": 3500, "hubs": "count of hubs with seats > 0", "addons": { "includeDataHub": { "monthly": 2000 } } },
+    { "id": "sf-pro", "vendor": "Salesforce", "label": "Salesforce Pro Suite", "seatPrice": 100, "addons": { "includeSfApiAddon": { "perSeatMonthly": 25 } }, "note": "Custom objects and sandbox included." },
+    { "id": "sf-core", "vendor": "Salesforce", "label": "Salesforce Core", "seatPrice": 195, "note": "Includes 500K Flex Credits per org. Don't state an allotment period." }
+  ],
+  "formula": "annual = (salesSeats + serviceSeats) * seatPrice * 12 + addonMonthly * 12 + addonPerSeatMonthly * seats * 12;  total = annual * years + onboardingPerHub * hubs (one-time, HubSpot only)",
+  "referenceCheck": {
+    "_note": "Unit-test fixture. With 30 sales + 20 service seats, these must match exactly.",
+    "hs-pro": { "annual": 54000, "threeYear": 165000 },
+    "hs-ent": { "annual": 90000, "threeYear": 277000 },
+    "hs-ent+dataHub": { "annual": 114000, "threeYear": 349000 },
+    "sf-pro": { "annual": 60000, "threeYear": 180000 },
+    "sf-pro+api": { "annual": 75000, "threeYear": 225000 },
+    "sf-core": { "annual": 117000, "threeYear": 351000 }
+  },
+  "presentationRules": [
+    "Headline the TIER JUMP: the capabilities a growing CBS company needs are Enterprise-only at HubSpot ($90 → $150, +67%, plus onboarding per hub). Salesforce Pro Suite includes custom objects and a sandbox at $100.",
+    "Never claim Salesforce is cheaper overall. Core is not cheaper seat-for-seat at list. Position it as more capability per dollar and fewer add-ons.",
+    "Never compare AI cost per resolution. If AI is discussed, compare predictability: credits that last the contract vs monthly reset and pause.",
+    "Always show: 'List prices, per user per month, billed annually, as of Nov 2026. Excludes discounts, partner services and third-party apps. Validate scope with your Salesforce account executive.'"
+  ],
+  "hiddenCosts": {
+    "title": "Costs that often don't show up in a HubSpot quote",
+    "items": ["Required onboarding fee per hub", "Data Hub for two-way warehouse sync", "API capacity packs ($500/month each)", "AI credit packs once included credits run out", "Third-party field service and dispatch apps", "Implementation partner middleware, often billed monthly", "Time-and-materials implementation with no cap"]
+  }
+}

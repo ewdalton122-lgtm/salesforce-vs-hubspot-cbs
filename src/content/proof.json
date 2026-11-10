@@ -1,0 +1,475 @@
+{
+  "_note": "Customer proof. NO customer names or logos anywhere: describe each customer anonymously and add 'Ask your Salesforce team for the full story.' Keep numbers exactly as written; never round the Customer Success Metrics.",
+  "customerSuccessMetrics": {
+    "source": "csm-fy27",
+    "distribution": "Cleared for sales presentations, webinars, live events, press/analyst briefings and web/landing pages per the citation guide. NOT for social (incl. LinkedIn, YouTube) without PR and legal approval. Use exact percentages and full metric wording. The report decks are Confidential and must not be shared.",
+    "global": [
+      [
+        "98%",
+        "Achieved positive ROI",
+        3887
+      ],
+      [
+        "55%",
+        "Percent ROI achieved",
+        3836
+      ],
+      [
+        "12 months",
+        "Time to ROI",
+        3745
+      ],
+      [
+        "97%",
+        "Satisfied",
+        3887
+      ],
+      [
+        "39%",
+        "Faster response",
+        3830
+      ],
+      [
+        "36%",
+        "Decrease in manual/repetitive tasks",
+        3804
+      ],
+      [
+        "38%",
+        "Increase in employee productivity",
+        3833
+      ]
+    ],
+    "industries": [
+      {
+        "industry": "Engineering, Construction & Real Estate",
+        "citationCustomers": 369,
+        "metrics": [
+          [
+            "99%",
+            "Achieved positive ROI",
+            369
+          ],
+          [
+            "60%",
+            "Percent ROI achieved",
+            367
+          ],
+          [
+            "12 months",
+            "Time to ROI",
+            363
+          ],
+          [
+            "99%",
+            "Satisfaction with Salesforce (T2B)",
+            369
+          ],
+          [
+            "45%",
+            "Faster response to customers/prospects/employees/partners",
+            363
+          ],
+          [
+            "43%",
+            "Decrease in time spent on manual or repetitive tasks",
+            359
+          ],
+          [
+            "44%",
+            "Increase in employee productivity",
+            361
+          ],
+          [
+            "46%",
+            "Improvement in project or deal pipeline visibility",
+            361
+          ],
+          [
+            "86%",
+            "Agree my organization has significantly improved our ability to coordinate across project teams, contractors, and/or stakeholders in one connected platform",
+            369
+          ]
+        ]
+      },
+      {
+        "industry": "Professional Services",
+        "citationCustomers": 222,
+        "guardrail": "Sub-industries not defined in the report. Don't claim it includes legal, consulting or staffing.",
+        "metrics": [
+          [
+            "97%",
+            "Achieved positive ROI",
+            222
+          ],
+          [
+            "61%",
+            "Percent ROI achieved",
+            220
+          ],
+          [
+            "12 months",
+            "Time to ROI",
+            214
+          ],
+          [
+            "98%",
+            "Satisfaction with Salesforce (T2B)",
+            222
+          ],
+          [
+            "45%",
+            "Faster response to customers/prospects/employees/partners",
+            219
+          ],
+          [
+            "42%",
+            "Decrease in time spent on manual or repetitive tasks",
+            219
+          ],
+          [
+            "43%",
+            "Increase in employee productivity",
+            219
+          ],
+          [
+            "42%",
+            "Faster resolution time",
+            220
+          ],
+          [
+            "79%",
+            "Agree our employees are freed up to focus on higher-value work",
+            222
+          ],
+          [
+            "75%",
+            "Agree my organization has significantly improved our ability to retain clients",
+            222
+          ],
+          [
+            "44%",
+            "Increase in productivity due to Salesforce AI",
+            189
+          ]
+        ]
+      }
+    ],
+    "citation": "Source: 2026 Salesforce Success Metrics [Segment Highlights]. Data is aggregated from xx customers across 9 countries. (Confirm the bracket fill and video use with #marketinglegal.)",
+    "personas": [
+      {
+        "persona": "Field Service (leaders and teams)",
+        "label": "Field service teams",
+        "guardrail": "A persona cut, NOT an industry. Never label as HVAC or home services. Avoid persona AI KPIs (small sample).",
+        "metrics": [
+          [
+            "99%",
+            "Achieved positive ROI",
+            151
+          ],
+          [
+            "52%",
+            "Percent ROI achieved",
+            151
+          ],
+          [
+            "10 months",
+            "Time to ROI",
+            149
+          ],
+          [
+            "100%",
+            "Satisfaction with Salesforce",
+            151
+          ],
+          [
+            "38%",
+            "Improvement in customer satisfaction (CSAT)",
+            146
+          ],
+          [
+            "36%",
+            "Improvement in mobile worker productivity",
+            147
+          ],
+          [
+            "30%",
+            "Decrease in service/support costs",
+            147
+          ],
+          [
+            "88%",
+            "Agree my organization's field service teams spend significantly less time on manual or repetitive tasks",
+            151
+          ]
+        ]
+      },
+      {
+        "persona": "Customer Service (leaders and teams)",
+        "label": "Customer service teams",
+        "guardrail": "A persona cut, NOT an industry.",
+        "metrics": [
+          [
+            "96%",
+            "Achieved positive ROI",
+            178
+          ],
+          [
+            "46%",
+            "Percent ROI achieved",
+            174
+          ],
+          [
+            "13 months",
+            "Time to ROI",
+            166
+          ],
+          [
+            "98%",
+            "Satisfaction with Salesforce",
+            178
+          ],
+          [
+            "35%",
+            "Faster response",
+            177
+          ],
+          [
+            "33%",
+            "CSAT improvement",
+            175
+          ],
+          [
+            "90%",
+            "Agree Salesforce's AI has helped my organization significantly increase our contact center case resolution rate",
+            178
+          ]
+        ]
+      }
+    ],
+    "aiNote": "There is no Agentforce customer cut. AI KPIs are worded 'Salesforce AI'; never relabel them as Agentforce results."
+  },
+  "stories": [
+    {
+      "id": "home-services",
+      "industry": "Roofing & home services",
+      "descriptor": "A multi-location roofing and home services company, built through acquisitions",
+      "stats": [
+        {
+          "value": "4x",
+          "label": "faster service work order closure"
+        },
+        {
+          "value": "100%",
+          "label": "of after-hours calls handled by Agentforce Voice"
+        },
+        {
+          "value": "84%",
+          "label": "fewer escalations"
+        }
+      ],
+      "products": [
+        "Field Service",
+        "Agentforce Voice",
+        "Data 360"
+      ],
+      "source": "story-home-services",
+      "image": "assets/images/cbs/hvac-panel.jpg"
+    },
+    {
+      "id": "recycler",
+      "industry": "Electronics recycling",
+      "descriptor": "A fast-growing electronics recycler",
+      "stats": [
+        {
+          "value": "1,000 → 6,000+",
+          "label": "customers"
+        },
+        {
+          "value": "50,000",
+          "label": "recycling collections"
+        },
+        {
+          "value": "15M lbs",
+          "label": "of material processed"
+        }
+      ],
+      "products": [
+        "Sales Cloud",
+        "Service Cloud",
+        "Field Service"
+      ],
+      "source": "story-recycler",
+      "image": "assets/images/cbs/waste-aerial.jpg"
+    },
+    {
+      "id": "water",
+      "industry": "Water technology",
+      "descriptor": "A water technology company with field teams",
+      "stats": [
+        {
+          "value": "20%",
+          "label": "fewer truck rolls"
+        },
+        {
+          "value": "35 min",
+          "label": "earlier start for technicians each day"
+        },
+        {
+          "value": "2 mo → ~3 wks",
+          "label": "technician training time"
+        }
+      ],
+      "products": [
+        "Agentforce for Field Service"
+      ],
+      "source": "story-water",
+      "image": "assets/images/cbs/water-plant.jpg"
+    },
+    {
+      "id": "security",
+      "industry": "Home security",
+      "descriptor": "A home security provider",
+      "stats": [
+        {
+          "value": "30%",
+          "label": "fewer \"where is my technician\" calls"
+        },
+        {
+          "value": "2.5%",
+          "label": "lower overall call volume"
+        }
+      ],
+      "products": [
+        "Agentforce for Field Service"
+      ],
+      "source": "story-security",
+      "image": "assets/images/cbs/contact-center.jpg"
+    },
+    {
+      "id": "trades",
+      "industry": "Home services (small business)",
+      "descriptor": "A home services business that scaled its crews",
+      "stats": [
+        {
+          "value": "30 → 130",
+          "label": "technicians in three years"
+        },
+        {
+          "value": "1 : 20–25",
+          "label": "dispatcher-to-worker ratio, up from 1 : 6–7"
+        },
+        {
+          "value": "2 min",
+          "label": "to create a work order, down from up to 2 days"
+        }
+      ],
+      "products": [
+        "Field Service",
+        "Data 360",
+        "Agentforce"
+      ],
+      "source": "story-trades",
+      "guardrail": "Small business. Never call it mid-market.",
+      "image": "assets/images/cbs/plumber.jpg"
+    },
+    {
+      "id": "equipment",
+      "industry": "Construction equipment",
+      "descriptor": "A construction equipment manufacturer",
+      "stats": [
+        {
+          "value": "2.5x",
+          "label": "higher lead response rate"
+        },
+        {
+          "value": "Minutes",
+          "label": "to follow up, down from 8 hours"
+        },
+        {
+          "value": "2 weeks",
+          "label": "to build its agent"
+        }
+      ],
+      "products": [
+        "Agentforce"
+      ],
+      "source": "story-equipment",
+      "image": "assets/images/cbs/construction.jpg"
+    },
+    {
+      "id": "staffing",
+      "industry": "Staffing (enterprise)",
+      "descriptor": "A global staffing company",
+      "stats": [
+        {
+          "value": "28%",
+          "label": "faster end-to-end hiring"
+        },
+        {
+          "value": "93%",
+          "label": "cut in job campaign prep time"
+        },
+        {
+          "value": "60+",
+          "label": "regional systems connected"
+        }
+      ],
+      "products": [
+        "Data 360",
+        "Agentforce"
+      ],
+      "source": "story-staffing",
+      "image": "assets/images/cbs/staffing-interview.jpg"
+    },
+    {
+      "id": "legal",
+      "industry": "Legal services",
+      "descriptor": "A legal services provider (claimant intake for mass-tort firms)",
+      "stats": [
+        {
+          "value": "70%",
+          "label": "more cases verified"
+        },
+        {
+          "value": "2x",
+          "label": "daily audit capacity"
+        },
+        {
+          "value": "10%",
+          "label": "reduction in claimant drop-off"
+        }
+      ],
+      "products": [
+        "Agentforce"
+      ],
+      "source": "story-legal",
+      "guardrail": "Not a law firm. Say 'legal services provider'.",
+      "image": "assets/images/cbs/staffing-interview.jpg"
+    },
+    {
+      "id": "recruiting",
+      "industry": "Recruiting",
+      "descriptor": "A boutique recruiting firm",
+      "stats": [
+        {
+          "value": "50%",
+          "label": "reduction in job description work"
+        },
+        {
+          "value": "130K+",
+          "label": "candidates searchable by AI"
+        }
+      ],
+      "products": [
+        "Agentforce"
+      ],
+      "source": "story-recruiting",
+      "image": "assets/images/cbs/staffing-interview.jpg"
+    }
+  ],
+  "analyst": {
+    "text": "Salesforce is named a Leader in the Gartner 2026 Magic Quadrant for CRM Sales Platforms.",
+    "guardrail": "CI must approve the exact wording under Gartner's citation rules. NEVER show the Magic Quadrant graphic. Hide this block until approved (feature flag)."
+  }
+}

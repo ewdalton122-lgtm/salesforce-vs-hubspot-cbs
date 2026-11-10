@@ -1,0 +1,27 @@
+{
+  "_note": "Cost of growing tower (check 2). No dollar amounts here; the tier-jump calculator handles pricing. 'positioning' sources render without a footnote. addOn: true tiles show a 'license / add-on' tag for honesty.",
+  "stages": [
+    { "stage": 1, "title": "Start with sales",
+      "hubspot": [{ "label": "Sales Hub", "pill": null, "source": "hs-pricing-sales" }, { "label": "Onboarding fee", "pill": "fee", "source": "hs-pricing-sales" }],
+      "salesforce": { "label": "Sales", "addOn": false, "source": "sf-pricing-sales" } },
+    { "stage": 2, "title": "Add a service team",
+      "hubspot": [{ "label": "+ Service Hub", "pill": null, "source": "hs-pricing-service" }, { "label": "+ Onboarding fee", "pill": "fee", "source": "hs-pricing-service" }],
+      "salesforce": { "label": "Service", "addOn": false, "source": "sf-service-pricing" } },
+    { "stage": 3, "title": "Separate business lines",
+      "hubspot": [{ "label": "+ Top-tier upgrade", "pill": "topTier", "source": "hs-catalog-products" }],
+      "salesforce": { "label": "Custom objects & record types", "addOn": false, "source": "sf-data-model" } },
+    { "stage": 4, "title": "Grow the contact database",
+      "hubspot": [{ "label": "+ Marketing contact tier", "pill": "fee", "source": "hs-catalog-products" }],
+      "salesforce": { "label": "One data model", "addOn": false, "source": "sf-data-model" } },
+    { "stage": 5, "title": "Connect the ERP and warehouse",
+      "hubspot": [{ "label": "+ Data Hub", "pill": "topTier", "source": "hs-pricing-data" }, { "label": "+ API capacity", "pill": null, "source": "hs-catalog-addons" }, { "label": "+ Custom integration", "pill": "customBuild", "source": "positioning" }],
+      "salesforce": { "label": "MuleSoft & Data 360", "addOn": true, "source": "sf-mulesoft" } },
+    { "stage": 6, "title": "Dispatch field crews",
+      "hubspot": [{ "label": "+ Marketplace dispatch app", "pill": "app", "source": "hs-catalog-products" }],
+      "salesforce": { "label": "Field Service", "addOn": true, "source": "sf-field-service" } },
+    { "stage": 7, "title": "Turn on AI agents",
+      "hubspot": [{ "label": "+ Credit packs", "pill": "limit", "source": "hs-kb-credits" }],
+      "salesforce": { "label": "Agentforce", "addOn": true, "source": "sf-agentforce-pricing" } }
+  ],
+  "closing": "Salesforce adds licenses as you grow too. Every one lands on the same platform, data model and security model."
+}

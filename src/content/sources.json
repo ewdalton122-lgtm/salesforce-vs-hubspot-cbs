@@ -1,0 +1,189 @@
+{
+  "_note": "Every footnote resolves to an entry here. Render as numbered footnotes plus a full Sources section. 'internal' sources must never be linked publicly.",
+  "sources": {
+    "hs-catalog-products": {
+      "label": "HubSpot Product & Services Catalog: Products",
+      "url": "https://legal.hubspot.com/hubspot-product-and-services-catalog/products",
+      "asOf": "2026-11"
+    },
+    "hs-catalog-limits": {
+      "label": "HubSpot Product & Services Catalog: Technical limits",
+      "url": "https://legal.hubspot.com/hubspot-product-and-services-catalog/technical-limits",
+      "asOf": "2026-11"
+    },
+    "hs-kb-parent-child": {
+      "label": "HubSpot KB: Add a parent or child company",
+      "url": "https://knowledge.hubspot.com/records/add-a-parent-or-child-company",
+      "asOf": "2026-11"
+    },
+    "hs-kb-credits": {
+      "label": "HubSpot KB: Understand HubSpot credits and billing",
+      "url": "https://knowledge.hubspot.com/account-management/understand-hubspot-credits-and-billing",
+      "asOf": "2026-09"
+    },
+    "hs-kb-agent-builder": {
+      "label": "HubSpot KB: Create and customize agents in the Agent Builder",
+      "url": "https://knowledge.hubspot.com/ai/create-and-customize-agents-in-the-agent-builder",
+      "asOf": "2026-11"
+    },
+    "hs-pricing-sales": {
+      "label": "HubSpot pricing: Sales Hub & Service Hub",
+      "url": "https://www.hubspot.com/pricing/sales",
+      "asOf": "2026-11",
+      "guardrail": "List prices, billed annually. Recheck before every publish."
+    },
+    "hs-pricing-data": {
+      "label": "HubSpot pricing: Data Hub",
+      "url": "https://www.hubspot.com/pricing/data",
+      "asOf": "2026-11"
+    },
+    "hs-flexible-pricing": {
+      "label": "HubSpot company news: Flexible pricing",
+      "url": "https://www.hubspot.com/company-news/flexible-pricing",
+      "asOf": "2026-10"
+    },
+    "sf-pricing-sales": {
+      "label": "Salesforce Sales Cloud pricing",
+      "url": "https://www.salesforce.com/sales/pricing/",
+      "asOf": "2026-11"
+    },
+    "sf-agentforce-pricing": {
+      "label": "Salesforce Agentforce pricing",
+      "url": "https://www.salesforce.com/agentforce/pricing/",
+      "asOf": "2026-11"
+    },
+    "sf-field-service": {
+      "label": "Salesforce Field Service pricing",
+      "url": "https://www.salesforce.com/service/field-service-management/pricing/",
+      "asOf": "2026-11"
+    },
+    "sf-agentforce-voice": {
+      "label": "Salesforce Agentforce Voice",
+      "url": "https://www.salesforce.com/agentforce/voice/",
+      "asOf": "2026-11"
+    },
+    "sf-agentforce-docs": {
+      "label": "Salesforce Agentforce product documentation",
+      "url": "https://www.salesforce.com/agentforce/",
+      "asOf": "2026-11"
+    },
+    "sf-q2-fy27": {
+      "label": "Salesforce FY27 Q2 results (Aug 26, 2026)",
+      "url": "https://s205.q4cdn.com/626266368/files/doc_financials/2027/q2/CRM-Q2-FY27-Earnings-Press-Release.pdf",
+      "asOf": "2026-08"
+    },
+    "sf-mulesoft": {
+      "label": "MuleSoft",
+      "url": "https://www.salesforce.com/products/mulesoft/",
+      "asOf": "2026-11"
+    },
+    "sf-informatica": {
+      "label": "Salesforce completes acquisition of Informatica",
+      "url": "https://www.salesforce.com/news/press-releases/2025/11/18/salesforce-completes-acquisition-of-informatica/",
+      "asOf": "2025-11"
+    },
+    "sf-mcp-ga": {
+      "label": "Salesforce Hosted MCP Servers are generally available",
+      "url": "https://developer.salesforce.com/blogs/2026/04/salesforce-hosted-mcp-servers-are-now-generally-available",
+      "asOf": "2026-04"
+    },
+    "sf-anthropic": {
+      "label": "Salesforce and Anthropic partnership announcement (Aug 26, 2026)",
+      "url": "https://www.salesforce.com/news/press-releases/2026/08/26/salesforce-and-anthropic-announce-claudeforce/",
+      "asOf": "2026-08",
+      "guardrail": "Never state availability dates."
+    },
+    "sf-data-model": {
+      "label": "Salesforce Platform documentation: account hierarchies, record types, person accounts",
+      "url": "https://www.salesforce.com/platform/",
+      "asOf": "2026-11"
+    },
+    "sf-compare": {
+      "label": "Salesforce vs HubSpot comparison",
+      "url": "https://www.salesforce.com/compare/salesforce-vs-hubspot/",
+      "asOf": "2026-11"
+    },
+    "csm-fy27": {
+      "label": "2026 Salesforce Success Metrics (FY27 Industry and Global Reports)",
+      "url": null,
+      "internal": true,
+      "asOf": "2026-06",
+      "guardrail": "Confidential reports; stats cleared for external sales use only. Not for social without PR and legal approval."
+    },
+    "story-home-services": {
+      "label": "Salesforce customer story (roofing & home services), Jul 2026",
+      "url": null,
+      "anonymized": true,
+      "asOf": "2026-07"
+    },
+    "story-recycler": {
+      "label": "Salesforce customer story (electronics recycling), Mar 2026",
+      "url": null,
+      "anonymized": true,
+      "asOf": "2026-03"
+    },
+    "story-water": {
+      "label": "Salesforce news: Agentforce for Field Service (water technology)",
+      "url": null,
+      "anonymized": true,
+      "asOf": "2025-04"
+    },
+    "story-security": {
+      "label": "Salesforce news: Agentforce for Field Service (home security)",
+      "url": null,
+      "anonymized": true,
+      "asOf": "2025-04"
+    },
+    "story-trades": {
+      "label": "Salesforce customer story (home services, small business, Australia), Oct 2025",
+      "url": null,
+      "anonymized": true,
+      "asOf": "2025-10"
+    },
+    "story-equipment": {
+      "label": "Salesforce customer story (construction equipment), Mar 2026",
+      "url": null,
+      "anonymized": true,
+      "asOf": "2026-03"
+    },
+    "story-staffing": {
+      "label": "Salesforce customer story (global staffing), Apr 2026",
+      "url": null,
+      "anonymized": true,
+      "asOf": "2026-04"
+    },
+    "field-observed": {
+      "label": "Salesforce field observation of HubSpot implementations",
+      "url": null,
+      "internal": true,
+      "asOf": "2026-11"
+    },
+    "positioning": {
+      "label": "Salesforce positioning",
+      "url": null,
+      "internal": true
+    },
+    "sf-revenue-cloud": {
+      "label": "Salesforce Revenue Cloud (revenue lifecycle management)",
+      "url": "https://www.salesforce.com/sales/revenue-lifecycle-management/",
+      "asOf": "2026-11"
+    },
+    "hs-ai-trust": {
+      "label": "HubSpot AI Trust & Model Cards",
+      "url": "https://trust.hubspot.com/ai",
+      "asOf": "2026-11"
+    },
+    "story-legal": {
+      "label": "Salesforce customer story (legal services), Oct 2026",
+      "url": null,
+      "anonymized": true,
+      "asOf": "2026-10"
+    },
+    "story-recruiting": {
+      "label": "Salesforce customer story (recruiting), Jul 2026",
+      "url": null,
+      "anonymized": true,
+      "asOf": "2026-07"
+    }
+  }
+}

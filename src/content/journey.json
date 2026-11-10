@@ -1,0 +1,40 @@
+{
+  "_note": "Follow the Call: check 3, operations after the sale. HubSpot steps marked 'native' must render as native (fairness). Systems and handoffs are computed from the 'system' values; nothing is hard-coded. A 'positioning' source renders as an 'Ask...' line without a footnote.",
+  "scenarios": {
+    "all": "A customer calls at 9 p.m. with an urgent service issue.",
+    "waste": "A commercial customer calls after hours about a missed pickup.",
+    "water": "A facility manager calls after hours about a treatment system alarm.",
+    "facilities": "A multi-site client calls after hours about an HVAC failure at one location.",
+    "home": "A homeowner calls at 9 p.m. with no heat.",
+    "construction": "A new homeowner calls after hours with a warranty issue.",
+    "staffing": "A client calls after hours needing three replacement workers by morning.",
+    "proserv": "A prospective client calls after hours to start an intake.",
+    "logistics": "A shipper calls after hours about a delayed load."
+  },
+  "steps": [
+    { "n": 1, "title": "The call is answered",
+      "salesforce": { "product": "Agentforce Voice", "text": "An AI voice agent answers, understands the request and authenticates the caller.", "source": "sf-agentforce-voice" },
+      "hubspot": { "status": "beta", "system": "HubSpot", "text": "Customer Agent's voice channel is in beta.", "source": "hs-kb-credits" } },
+    { "n": 2, "title": "Customer, site and history found",
+      "salesforce": { "product": "Customer 360", "text": "The customer, the site and the full service history, on one record.", "source": "sf-data-model" },
+      "hubspot": { "status": "native", "system": "HubSpot", "text": "Contact and company records are native.", "source": "hs-catalog-products" } },
+    { "n": 3, "title": "Case and work order created",
+      "salesforce": { "product": "Service Cloud", "text": "A case with SLA and routing, and a work order created from the conversation.", "source": "sf-service-pricing" },
+      "hubspot": { "status": "native", "system": "HubSpot", "text": "Help desk tickets are native in Service Hub.", "source": "hs-pricing-service" } },
+    { "n": 4, "title": "Technician scheduled and dispatched",
+      "salesforce": { "product": "Field Service", "text": "Scheduling and dispatch pick the right technician for the job.", "source": "sf-field-service" },
+      "hubspot": { "status": "app", "system": "Marketplace field service app", "text": "No native field service; dispatch runs in a marketplace app.", "source": "hs-catalog-products" } },
+    { "n": 5, "title": "Job completed in the field",
+      "salesforce": { "product": "Field Service mobile", "text": "The technician closes the work order on mobile, with notes and photos.", "source": "sf-field-service" },
+      "hubspot": { "status": "app", "system": "Marketplace field service app", "text": "Job completion happens in the separate app.", "source": "hs-catalog-products" } },
+    { "n": 6, "title": "Quote and contract for follow-on work",
+      "salesforce": { "product": "Revenue Cloud", "text": "Pricing, quoting and contracting on the same data model as the job.", "source": "sf-revenue-cloud" },
+      "hubspot": { "status": "native", "system": "HubSpot", "text": "Quotes are native in HubSpot.", "source": "hs-pricing-sales" } },
+    { "n": 7, "title": "Billing and the ERP updated",
+      "salesforce": { "product": "Revenue Cloud + MuleSoft", "text": "Billing on the same data model, and MuleSoft keeps the ERP in sync.", "source": "sf-mulesoft" },
+      "hubspot": { "status": "integration", "system": "ERP integration (custom or partner)", "text": "Ask whether the two-way ERP sync is native or a custom build, and who owns it.", "source": "positioning" } },
+    { "n": 8, "title": "Rolled up to the parent account",
+      "salesforce": { "product": "Account hierarchies", "text": "The job rolls up across brands and locations to the parent account.", "source": "sf-data-model" },
+      "hubspot": { "status": "limit", "system": "HubSpot", "text": "One parent per company; activities and deals don't roll up to the parent.", "source": "hs-kb-parent-child" } }
+  ]
+}

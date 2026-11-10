@@ -1,0 +1,113 @@
+{
+  "_note": "v3: the five checks follow the five evaluation topics. Order inside each check is ALWAYS Salesforce first, then HubSpot. Every claim renders its source footnote. HubSpot absence claims use 'doesn't offer' / 'doesn't document', never 'can't'. Edition names and per-seat pricing appear ONLY in the cost check's microsite detail and the calculator, never in headlines.",
+  "asOf": "2026-11",
+  "checks": [
+    {
+      "id": "data-model", "number": 1, "title": "Your data model,", "titleAccent": "built your way.",
+      "salesforce": {
+        "headline": "Build your real business: projects, work orders, job orders, matters and how they connect.",
+        "points": [
+          { "label": "Custom objects with rich relationships for the way services businesses actually work (projects, SOWs, work orders, job orders, candidates, matters)", "source": "sf-data-model" },
+          { "label": "Multi-level account hierarchies with roll-ups, so every acquired brand fits one model", "source": "sf-data-model" },
+          { "label": "Record types: a separate process, fields and layouts per line of business", "source": "sf-data-model" },
+          { "label": "Person accounts for households; contacts related to multiple accounts", "source": "sf-data-model" }
+        ],
+        "visual": "object-graph"
+      },
+      "hubspot": {
+        "headline": "HubSpot falls short.",
+        "points": [
+          { "label": "Centers on contacts, companies and deals", "source": "hs-catalog-products" },
+          { "label": "Custom objects are top-tier only (10 definitions); 9 defined associations per custom object type", "source": "hs-catalog-products" },
+          { "label": "A child company can have only one parent; activities and deals don't roll up to the parent", "source": "hs-kb-parent-child", "guardrail": "Never say 'nothing rolls up'. HubSpot offers rollup properties." }
+        ]
+      },
+      "askLive": "Build our real objects in the demo, with the relationships between them."
+    },
+    {
+      "id": "cost", "number": 2, "title": "The cost", "titleAccent": "of growing.",
+      "salesforce": {
+        "headline": "One platform you can start small on and grow into.",
+        "points": [
+          { "label": "New capabilities (service, field, data, AI) on the same foundation, with no re-platforming", "source": "positioning" },
+          { "label": "Flex Credits last the whole contract term, with no overage penalty", "source": "sf-agentforce-pricing" }
+        ],
+        "visual": "platform-vs-stack",
+        "micrositeDetail": "Show the cost calculator here (cost-calculator.json), with its disclaimer. This is the ONLY place edition names and seat prices appear."
+      },
+      "hubspot": {
+        "headline": "HubSpot falls short.",
+        "points": [
+          { "label": "Growth can mean another hub, a higher tier, and a required onboarding fee per hub", "source": "hs-pricing-sales" },
+          { "label": "Marketing contacts are billed in tiers; exceeding a tier is billed immediately, and tiers can't be lowered until renewal", "source": "hs-catalog-products" },
+          { "label": "Usage-based credits and add-ons (API capacity, Data Hub for two-way warehouse sync)", "source": "hs-catalog-limits" }
+        ]
+      },
+      "askLive": "Give us a 3-year price including every capability we listed, the tier each requires, and how contacts, seats and add-ons change it as we grow."
+    },
+    {
+      "id": "operations", "number": 3, "title": "Operations", "titleAccent": "after the sale.",
+      "salesforce": {
+        "headline": "The whole path from quote to service, on one platform.",
+        "points": [
+          { "label": "Revenue Cloud unifies pricing, quoting, contracting and billing on a single data model", "source": "sf-revenue-cloud" },
+          { "label": "Field Service: scheduling, dispatch and a technician mobile app", "source": "sf-field-service" },
+          { "label": "Agentforce Voice (GA) and Service Cloud Voice: calls, transcripts and AI summaries on the case", "source": "sf-agentforce-voice" },
+          { "label": "A multi-location home services company has Agentforce handling 100% of its after-hours calls", "source": "story-home-services", "stat": { "value": 100, "suffix": "%" } }
+        ],
+        "visual": "quote-to-service-pipeline"
+      },
+      "hubspot": {
+        "headline": "HubSpot falls short.",
+        "points": [
+          { "label": "Strongest at the front of the funnel", "source": "positioning" },
+          { "label": "Doesn't offer native field service; dispatch requires marketplace apps", "source": "hs-catalog-products", "guardrail": "Absence claim. Don't claim HubSpot has no billing: Revenue Hub exists." },
+          { "label": "Customer Agent voice channel is in beta", "source": "hs-kb-credits", "guardrail": "Recheck beta status before every publish." }
+        ]
+      },
+      "askLive": "Show the full path from quote to approval, contract, handoff, delivery, billing and service, and which parts need a separate product."
+    },
+    {
+      "id": "governance", "number": 4, "title": "Governance", "titleAccent": "and control.",
+      "salesforce": {
+        "headline": "Enterprise-grade control as you add teams, brands and entities.",
+        "points": [
+          { "label": "Record-level security, sharing rules and role hierarchies", "source": "sf-data-model" },
+          { "label": "Field-level security and complex approval flows", "source": "sf-data-model" },
+          { "label": "Sandboxes to test every change before it goes live", "source": "sf-pricing-sales" }
+        ],
+        "visual": "governance-shields"
+      },
+      "hubspot": {
+        "headline": "HubSpot falls short.",
+        "points": [
+          { "label": "Field-level permissions are top-tier only", "source": "hs-catalog-products" },
+          { "label": "One standard sandbox, top tier only", "source": "hs-catalog-products", "guardrail": "HubSpot does offer Teams by business unit. Don't claim it has no business units." }
+        ]
+      },
+      "askLive": "Show complex approvals, role- and record-level security across business units, sandboxes and change management."
+    },
+    {
+      "id": "ai-data", "number": 5, "title": "AI", "titleAccent": "on a real data foundation.",
+      "salesforce": {
+        "headline": "Agents grounded on all your data, and governed.",
+        "points": [
+          { "label": "Data 360 with Zero Copy reads warehouse data in place (Snowflake, Databricks, Google Cloud, AWS, Azure); MuleSoft and Informatica connect the rest", "source": "sf-q2-fy27" },
+          { "label": "82 trillion records brought in via Zero Copy in a single quarter", "source": "sf-q2-fy27", "stat": { "value": 82, "suffix": " trillion" } },
+          { "label": "Testing Center, draft and committed agent versions with rollback, session tracing", "source": "sf-agentforce-docs" },
+          { "label": "Einstein Trust Layer: zero data retention with model providers, geo-aware routing, customer model choice", "source": "sf-agentforce-docs" }
+        ],
+        "visual": "data-into-agentforce"
+      },
+      "hubspot": {
+        "headline": "HubSpot falls short.",
+        "points": [
+          { "label": "Included AI credits reset monthly; usage features pause when they run out", "source": "hs-kb-credits" },
+          { "label": "Agent Builder doesn't document version history or rollback", "source": "hs-kb-agent-builder" },
+          { "label": "Zero data retention offered only 'where possible'", "source": "hs-ai-trust" }
+        ]
+      },
+      "askLive": "Show your AI using our data from outside the CRM (project, billing, scheduling, support), and what governs its actions and access."
+    }
+  ]
+}

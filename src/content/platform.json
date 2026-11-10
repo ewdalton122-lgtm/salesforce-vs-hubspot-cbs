@@ -1,0 +1,32 @@
+{
+  "_note": "Platform stack (matches video: Data 360, Customer 360 apps, Agentforce, Slack; open by design). Examples are illustrative use cases, not customer claims, so they carry no footnote. Never state Claude availability dates.",
+  "title": "Not just a CRM.",
+  "titleAccent": "A platform.",
+  "subtitle": "Salesforce is built for the agentic enterprise.",
+  "layers": [
+    { "id": "data", "name": "Data 360", "tagline": "One view of your data.", "detail": "Unify CRM, ERP, billing and warehouse data. Zero Copy reads data where it lives, so you don't duplicate it.", "shot": "s4-control-plane.webp", "source": "sf-q2-fy27" },
+    { "id": "apps", "name": "Customer 360 apps", "tagline": "Sales, service and field on one platform.", "detail": "Sell, quote, schedule, dispatch and service from the same customer record.", "shot": "s5-fs-dashboard.webp", "source": "sf-field-service" },
+    { "id": "agents", "name": "Agentforce", "tagline": "Agents that do real work.", "detail": "Agents answer calls, qualify leads, book jobs and update records, with testing, versioning and the Einstein Trust Layer.", "shot": "s6-multi-agent.webp", "source": "sf-agentforce-docs" },
+    { "id": "slack", "name": "Slack", "tagline": "Where your teams and agents meet.", "detail": "Teams and agents work together where people already talk, with CRM data in the conversation.", "shot": "s8-slackbot.webp", "source": "sf-slackbot" }
+  ],
+  "examples": {
+    "all": { "data": ["Service history by site", "Acquired-company data in one place"], "apps": ["A different process per business line", "Dispatch to the right technician"], "agents": ["After-hours calls answered", "Work orders from a conversation"], "slack": ["Branch alerts", "Pipeline questions in plain language"] },
+    "waste": { "data": ["Container and route history by site", "Acquired haulers' customer records"], "apps": ["Residential, commercial and roll-off processes", "Container swaps dispatched"], "agents": ["Missed-pickup calls handled after hours", "Pickup changes booked by an agent"], "slack": ["Route supervisors alerted to escalations", "Daily service exceptions"] },
+    "water": { "data": ["Asset and tank records by site", "Treatment data from the warehouse"], "apps": ["Service-contract renewals", "Technician scheduling"], "agents": ["Service requests triaged", "Work orders from a call"], "slack": ["Field and office coordination", "Escalation alerts"] },
+    "facilities": { "data": ["Multi-site client portfolios", "SLA and entitlement data"], "apps": ["SLA-driven work orders", "Crew dispatch across sites"], "agents": ["Service requests from any channel", "Status updates to clients"], "slack": ["Site managers coordinate", "SLA breach alerts"] },
+    "home": { "data": ["Household and equipment history", "Acquired-brand customer lists"], "apps": ["Repair vs. replace quoting", "Technician dispatch"], "agents": ["After-hours calls answered and booked", "Follow-up quotes"], "slack": ["Dispatch and tech coordination", "Daily booking summaries"] },
+    "construction": { "data": ["Projects, bids and change orders", "ERP job-cost data"], "apps": ["Pursuit-to-contract pipeline", "Warranty service cases"], "agents": ["Lead follow-up in minutes", "Warranty requests triaged"], "slack": ["Project team coordination", "Executive pipeline questions"] },
+    "staffing": { "data": ["Candidates, clients and placements", "Timesheets from back-office systems"], "apps": ["Job-order pipeline", "Recruiter workflows"], "agents": ["Candidates screened and matched", "Interview scheduling"], "slack": ["Recruiter and account manager coordination", "Hot-job alerts"] },
+    "proserv": { "data": ["Clients, matters and engagements", "Billing data from the ERP"], "apps": ["New-business pipeline", "Engagement workflows"], "agents": ["Intake qualified and routed", "Client status updates"], "slack": ["Partner and staff coordination", "New-matter alerts"] },
+    "logistics": { "data": ["Shippers, lanes and loads", "TMS and ERP data"], "apps": ["Shipper sales pipeline", "Claims and service cases"], "agents": ["Load status inquiries answered", "Exceptions routed"], "slack": ["Ops desk coordination", "Exception alerts"] }
+  },
+  "openRail": [
+    { "label": "MuleSoft", "logo": null, "source": "sf-mulesoft" },
+    { "label": "Zero Copy", "logo": null, "source": "sf-q2-fy27" },
+    { "label": "MCP", "logo": null, "source": "sf-mcp-ga" },
+    { "label": "Claude", "logo": "claude.svg", "source": "sf-anthropic" },
+    { "label": "Snowflake", "logo": "snowflake.svg", "source": "sf-q2-fy27" },
+    { "label": "Databricks", "logo": "databricks.svg", "source": "sf-q2-fy27" },
+    { "label": "Google Cloud", "logo": "googlecloud.svg", "source": "sf-q2-fy27" }
+  ]
+}

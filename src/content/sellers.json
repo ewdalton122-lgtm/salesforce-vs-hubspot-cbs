@@ -1,0 +1,4 @@
+{
+  "_note": "Seller contact shown in the CTA. Select with ?seller=<key>. Ship 'default' with placeholders until Sales provides details.",
+  "default": { "name": "[Seller name]", "title": "[Title]", "email": "[email]", "phone": "[phone]", "meetingUrl": "" }
+}

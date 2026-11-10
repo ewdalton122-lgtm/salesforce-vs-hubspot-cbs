@@ -1,0 +1,221 @@
+WEBVTT
+
+1
+00:00:01.300 --> 00:00:04.020
+Every growing services business reaches a moment
+
+2
+00:00:04.020 --> 00:00:08.808
+when the tools that got it started can't keep up with where it's going.
+
+3
+00:00:08.808 --> 00:00:12.228
+So before you choose a CRM, run five checks:
+
+4
+00:00:12.228 --> 00:00:20.331
+your data model, the cost of growing, operations after the sale, governance and control, and your AI and data foundation.
+
+5
+00:00:21.281 --> 00:00:23.421
+If you run a services business,
+
+6
+00:00:23.421 --> 00:00:29.121
+from home services, waste and water to construction, staffing, legal and consulting,
+
+7
+00:00:29.121 --> 00:00:31.869
+your business doesn't run on deals alone.
+
+8
+00:00:31.869 --> 00:00:35.129
+It runs on projects, work orders, job orders and matters,
+
+9
+00:00:35.129 --> 00:00:40.456
+through acquisitions, crews in the field, and the systems that bill it all.
+
+10
+00:00:40.456 --> 00:00:42.910
+Plenty of tools are easy to start.
+
+11
+00:00:42.910 --> 00:00:46.427
+Salesforce is built to scale. Here's the proof.
+
+12
+00:00:46.877 --> 00:00:49.125
+Check one: your data model.
+
+13
+00:00:49.125 --> 00:00:56.765
+Salesforce lets you build your real business: projects, work orders, job orders, matters and the relationships between them,
+
+14
+00:00:56.765 --> 00:01:00.591
+with account hierarchies for every brand you acquire.
+
+15
+00:01:00.591 --> 00:01:04.531
+HubSpot falls short. It centers on contacts, companies and deals.
+
+16
+00:01:04.531 --> 00:01:10.610
+Custom objects sit in its top tier, and a company can have just one parent.
+
+17
+00:01:11.260 --> 00:01:13.545
+Check two: the cost of growing.
+
+18
+00:01:13.545 --> 00:01:17.845
+Salesforce is one platform you can start small on and grow into,
+
+19
+00:01:17.845 --> 00:01:20.823
+with new capabilities on the same foundation.
+
+20
+00:01:20.823 --> 00:01:26.503
+With HubSpot, growth can mean another hub, a higher tier, and another onboarding fee.
+
+21
+00:01:26.503 --> 00:01:31.666
+Marketing contacts are billed in tiers, and going over is billed immediately.
+
+22
+00:01:32.316 --> 00:01:35.245
+Check three: operations after the sale.
+
+23
+00:01:35.245 --> 00:01:43.636
+Salesforce runs the whole path, from quote and approval to contract, handoff, field work, billing and service, on one platform.
+
+24
+00:01:43.636 --> 00:01:51.676
+One multi-location home services company now has Agentforce handling 100% of its after-hours calls.
+
+25
+00:01:51.676 --> 00:01:54.616
+HubSpot is strongest at the front of the funnel.
+
+26
+00:01:54.616 --> 00:02:02.432
+It doesn't offer native field service, so dispatch and delivery mean separate apps, and its voice agent is still in beta.
+
+27
+00:02:03.182 --> 00:02:05.689
+Check four: governance and control.
+
+28
+00:02:05.689 --> 00:02:12.989
+Salesforce gives you record-level security, role hierarchies, and approval flows across every business unit,
+
+29
+00:02:12.989 --> 00:02:17.128
+with sandboxes to test every change before it goes live.
+
+30
+00:02:17.128 --> 00:02:23.409
+In HubSpot, field-level permissions sit in its top tier, and you get one standard sandbox.
+
+31
+00:02:24.059 --> 00:02:27.211
+Check five: your AI and data foundation.
+
+32
+00:02:27.211 --> 00:02:34.051
+Agentforce works on all your data, connected through Data 360, MuleSoft and Zero Copy,
+
+33
+00:02:34.051 --> 00:02:39.335
+and every agent is tested, versioned and governed by the Einstein Trust Layer.
+
+34
+00:02:39.335 --> 00:02:44.175
+HubSpot's AI credits reset every month, agents pause when they run out,
+
+35
+00:02:44.175 --> 00:02:48.766
+and its agent builder doesn't document version history or rollback.
+
+36
+00:02:49.516 --> 00:02:52.972
+That's the difference between a CRM and a platform.
+
+37
+00:02:52.972 --> 00:02:56.229
+Salesforce is built for the agentic enterprise.
+
+38
+00:02:56.229 --> 00:02:59.349
+Your data comes together in Data 360.
+
+39
+00:02:59.349 --> 00:03:02.789
+Sales, service and field run on one platform.
+
+40
+00:03:02.789 --> 00:03:03.769
+Agentforce does real work.
+
+41
+00:03:03.769 --> 00:03:07.596
+Slack is where your teams and agents meet.
+
+42
+00:03:07.596 --> 00:03:09.456
+And it's open by design:
+
+43
+00:03:09.456 --> 00:03:14.618
+it connects to your ERP, your data warehouse, and AI models like Claude.
+
+44
+00:03:15.368 --> 00:03:19.168
+It's why services companies are growing on Salesforce:
+
+45
+00:03:19.168 --> 00:03:22.688
+a staffing company hiring 28% faster,
+
+46
+00:03:22.688 --> 00:03:26.968
+a legal services provider verifying 70% more cases,
+
+47
+00:03:26.968 --> 00:03:31.813
+and a home services company closing work orders four times faster.
+
+48
+00:03:33.363 --> 00:03:37.795
+So before you choose, ask HubSpot to prove it, live, with your data.
+
+49
+00:03:37.795 --> 00:03:40.881
+Can it build your real objects, and how they connect?
+
+50
+00:03:40.881 --> 00:03:46.251
+Can it run quote to delivery, billing and service in one system, without separate apps?
+
+51
+00:03:46.251 --> 00:03:50.709
+Can its AI work on data from outside the CRM, with guardrails?
+
+52
+00:03:50.709 --> 00:03:54.730
+Ask for a proof of concept on the first two. Then ask us.
+
+53
+00:03:54.730 --> 00:03:59.877
+Salesforce will show you all three, live, on your data, because we can prove it.
+
+54
+00:03:59.877 --> 00:04:03.382
+Easy to start is good. Built to scale is better.
+
+55
+00:04:03.382 --> 00:04:05.976
+Talk to your Salesforce account team.

@@ -1,0 +1,80 @@
+{
+  "_note": "The scroll story. Each check act maps to checks.json by checkId. 'frictions' feed the live scoreboard; each one restates a sourced HubSpot point from checks.json (same source ids). Kinds: gate = top tier only, app = separate app or product, addon = add-on or fee, limit = documented limit.",
+  "dayOne": {
+    "kicker": "Day one",
+    "title": "Plenty of tools are easy to start.",
+    "body": "Pick your business. On day one, both futures look the same: one office, one team, one set of customers. Now watch what happens as you grow.",
+    "verdict": "Easy to start. Both are."
+  },
+  "acts": [
+    {
+      "checkId": "data-model",
+      "scene": "Acquisitions arrive. Your real objects need to connect.",
+      "sfVisual": "Every acquired brand locks into one account hierarchy, and roll-ups flow to the parent.",
+      "hsVisual": "Contacts, companies and deals. One parent per company, and custom objects behind the top tier.",
+      "verdict": "Salesforce fits your real business. Every brand, one model.",
+      "frictions": [
+        { "label": "Custom objects: top tier only", "kind": "gate", "source": "hs-catalog-products" },
+        { "label": "One parent per company", "kind": "limit", "source": "hs-kb-parent-child" }
+      ]
+    },
+    {
+      "checkId": "cost",
+      "scene": "You add a service team, a second line of business, more contacts.",
+      "sfVisual": "New capabilities light up on the same foundation.",
+      "hsVisual": "Another hub, a higher tier, another onboarding fee.",
+      "verdict": "Salesforce grows with you. No stacking, no re-platforming.",
+      "frictions": [
+        { "label": "Another hub", "kind": "addon", "source": "hs-pricing-sales" },
+        { "label": "Onboarding fee per hub", "kind": "addon", "source": "hs-pricing-sales" },
+        { "label": "Marketing contact tiers", "kind": "addon", "source": "hs-catalog-products" },
+        { "label": "API capacity & Data Hub", "kind": "addon", "source": "hs-catalog-limits" }
+      ]
+    },
+    {
+      "checkId": "operations",
+      "scene": "9 p.m. A customer calls. A crew has to roll.",
+      "sfVisual": "Quote to service on one conveyor: the call is answered, the work order is created, the technician is dispatched, the job is billed.",
+      "hsVisual": "The path breaks into separate apps, and the voice agent is in beta.",
+      "verdict": "Salesforce runs the whole job, from first call to final invoice.",
+      "frictions": [
+        { "label": "Dispatch in marketplace apps", "kind": "app", "source": "hs-catalog-products" },
+        { "label": "Voice agent in beta", "kind": "limit", "source": "hs-kb-credits" }
+      ]
+    },
+    {
+      "checkId": "governance",
+      "scene": "More brands, more teams, more people who need different access.",
+      "sfVisual": "Every business unit under its own shield, and every change tested in a sandbox first.",
+      "hsVisual": "Field-level permissions behind the top tier, and one standard sandbox.",
+      "verdict": "Salesforce gives you control at every level.",
+      "frictions": [
+        { "label": "Field-level permissions: top tier only", "kind": "gate", "source": "hs-catalog-products" },
+        { "label": "One standard sandbox", "kind": "gate", "source": "hs-catalog-products" }
+      ]
+    },
+    {
+      "checkId": "ai-data",
+      "scene": "You turn on AI agents. They need all your data, and guardrails.",
+      "sfVisual": "Warehouse, ERP and CRM data flows into Data 360, and Agentforce works on all of it, tested and governed.",
+      "hsVisual": "Credits reset every month, and agents pause when they run out.",
+      "verdict": "Salesforce AI runs on all your data, every day of the month.",
+      "frictions": [
+        { "label": "Credits reset; agents pause", "kind": "limit", "source": "hs-kb-credits" },
+        { "label": "No documented rollback", "kind": "limit", "source": "hs-kb-agent-builder" }
+      ]
+    }
+  ],
+  "finale": {
+    "kicker": "Two futures",
+    "title": "Same start. Different futures.",
+    "body": "One connected platform that grew with every brand, crew and call, or a scatter of hubs, tiers and separate apps.",
+    "verdict": "Easy to start is good. Built to scale is better."
+  },
+  "kindLabels": {
+    "gate": "Top-tier gates",
+    "app": "Separate apps",
+    "addon": "Add-ons & fees",
+    "limit": "Documented limits"
+  }
+}
