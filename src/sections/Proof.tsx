@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { ArrowRight } from 'lucide-react';
 import { proof, site } from '../lib/content';
 import { asset } from '../lib/env';
 import { useApp } from '../context/AppContext';
-import { Footnote, Reveal, SectionHead, StatValue } from '../components/ui';
+import { Counter, Footnote, Reveal, SectionHead, StatValue } from '../components/ui';
 
 type Cut = { id: 'ecre' | 'proserv' | 'fieldService' | 'customerService' | 'global'; tab: string; metrics: Array<[string, string, number]>; customers: number };
 
@@ -83,6 +84,32 @@ function Metrics() {
   );
 }
 
+const Unit = ({ children }: { children: string }) => <span className="ml-[0.18em] text-[0.56em] font-bold tracking-normal text-sf-blue/70">{children}</span>;
+
+/** Story stat values: big numerals, smaller unit words, and an arrow icon for before/after values. */
+function StoryValue({ value }: { value: string }) {
+  const v = value.replace(/\s:\s/g, ':');
+  const simple = v.match(/^(\d+(?:\.\d+)?)(%|x)?(?:\s([a-z]+))?$/i);
+  if (simple)
+    return (
+      <>
+        <Counter value={Number(simple[1])} suffix={simple[2] ?? ''} decimals={simple[1].includes('.') ? 1 : 0} />
+        {simple[3] && <Unit>{simple[3]}</Unit>}
+      </>
+    );
+  if (!/\d/.test(v)) return <>{v}</>;
+  return (
+    <>
+      {v.split(/(→|\b[A-Za-z]{2,}\b)/).map((t, i) => {
+        if (t === '→') return <ArrowRight key={i} aria-label="to" className="mx-[0.2em] inline-block h-[0.62em] w-[0.62em] -translate-y-[0.06em] text-sf-blue/50" strokeWidth={3} />;
+        if (/^[A-Za-z]{2,}$/.test(t)) return <Unit key={i}>{t}</Unit>;
+        const txt = t.trim();
+        return txt ? <span key={i}>{txt}</span> : null;
+      })}
+    </>
+  );
+}
+
 function Stories({ showHeading }: { showHeading: boolean }) {
   const { industry } = useApp();
   const ordered = useMemo(() => {
@@ -113,13 +140,13 @@ function Stories({ showHeading }: { showHeading: boolean }) {
                 {s.descriptor}
                 <Footnote id={s.source} tone="bright" />
               </p>
-              <ul className="mt-4 space-y-3">
+              <ul className="mt-5 space-y-4">
                 {s.stats.map((st) => (
-                  <li key={st.label} className="flex items-baseline gap-3">
-                    <span className="min-w-[92px] text-[28px] font-extrabold leading-none text-sf-blue">
-                      <StatValue value={st.value} />
-                    </span>
-                    <span className="text-[15px] leading-snug text-[#33415c]">{st.label}</span>
+                  <li key={st.label} className="border-l-[3px] border-sf-cloud/50 pl-3.5">
+                    <p className="whitespace-nowrap text-[30px] font-extrabold leading-none tracking-tight tabular-nums text-sf-blue">
+                      <StoryValue value={st.value} />
+                    </p>
+                    <p className="mt-1.5 text-[14.5px] leading-snug text-[#33415c]">{st.label.replace(/\s:\s/g, ":")}</p>
                   </li>
                 ))}
               </ul>
