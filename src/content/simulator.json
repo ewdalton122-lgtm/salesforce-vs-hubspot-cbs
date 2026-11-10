@@ -43,7 +43,7 @@
     {
       "id": "access",
       "check": "governance",
-      "trigger": "brands >= 2 || linesOfBusiness >= 2",
+      "trigger": "accessTeams >= 2",
       "hubspot": {
         "text": "Different access per brand or team needs field-level permissions, which are top tier only.",
         "pill": "topTier",
@@ -54,7 +54,7 @@
         "source": "sf-data-model"
       },
       "short": "Access by brand or team",
-      "when": "2+ brands or lines"
+      "when": "2+ teams with different access"
     },
     {
       "id": "users",
@@ -107,7 +107,7 @@
     {
       "id": "erp",
       "check": "ai-data",
-      "trigger": "erp === true || dispatch === true",
+      "trigger": "erp === true",
       "hubspot": {
         "text": "Extra API capacity is sold as an add-on; ask whether two-way ERP sync is native or a custom build.",
         "pill": "customBuild",
@@ -118,7 +118,7 @@
         "source": "sf-mulesoft"
       },
       "short": "Two-way ERP sync",
-      "when": "ERP billing or dispatch"
+      "when": "Billing from an ERP"
     },
     {
       "id": "warehouse",
@@ -153,6 +153,6 @@
       "when": "AI beyond included credits"
     }
   ],
-  "emptyState": "At this size, either works. Slide anything up and watch what changes.",
+  "emptyState": "On day one, either works. Move any control and watch what changes.",
   "honestyNote": "This shows how capabilities and limits change as you grow, not prices. Salesforce adds licenses as you grow too, and every one lands on the same platform."
 }

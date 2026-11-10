@@ -2,16 +2,23 @@ import { creditMath, type CreditAssumptions } from './credits';
 
 export type SimInputs = {
   brands: number;
-  locations: number;
+  accessTeams: number;
   users: number;
   linesOfBusiness: number;
   technicians: number;
   aiConversations: number;
   erp: boolean;
-  dispatch: boolean;
   phone: boolean;
   warehouse: boolean;
 };
+
+/** Day one: one brand, one team, one line of business, nothing switched on. Every control starts below its rule. */
+export const BASELINE: SimInputs = {
+  brands: 1, accessTeams: 1, users: 25, linesOfBusiness: 1, technicians: 0, aiConversations: 0, erp: false, phone: false, warehouse: false,
+};
+
+/** True when any scenario key is present, so a shared link loads its scenario instead of the baseline. */
+export const hasScenario = (qs: string) => KEYS.some(([, short]) => new URLSearchParams(qs).has(short));
 
 export type SimRule = {
   id: string;
@@ -26,11 +33,11 @@ type Ctx = SimInputs & { creditsNeeded: number; includedCredits: number };
 export const TRIGGERS: Record<string, (c: Ctx) => boolean> = {
   lob: (c) => c.linesOfBusiness >= 2,
   brands: (c) => c.brands >= 2,
-  access: (c) => c.brands >= 2 || c.linesOfBusiness >= 2,
+  access: (c) => c.accessTeams >= 2,
   users: (c) => c.users > 2500,
   field: (c) => c.technicians > 0,
   voice: (c) => c.phone === true,
-  erp: (c) => c.erp === true || c.dispatch === true,
+  erp: (c) => c.erp === true,
   warehouse: (c) => c.warehouse === true,
   ai: (c) => c.aiConversations > 0 && c.creditsNeeded > c.includedCredits,
 };
@@ -54,9 +61,16 @@ export function evaluate(inputs: SimInputs, rules: SimRule[], a: CreditAssumptio
 }
 
 const KEYS: Array<[keyof SimInputs, string]> = [
-  ['brands', 'b'], ['locations', 'l'], ['users', 'u'], ['linesOfBusiness', 'lob'], ['technicians', 't'],
-  ['aiConversations', 'ai'], ['erp', 'erp'], ['dispatch', 'd'], ['phone', 'p'], ['warehouse', 'w'],
+  ['brands', 'b'], ['accessTeams', 'at'], ['users', 'u'], ['linesOfBusiness', 'lob'], ['technicians', 't'],
+  ['aiConversations', 'ai'], ['erp', 'erp'], ['phone', 'p'], ['warehouse', 'w'],
 ];
+
+/** Removes scenario keys and keeps anything else (seller, social flags). */
+export function stripScenario(qs: string): string {
+  const p = new URLSearchParams(qs);
+  KEYS.forEach(([, short]) => p.delete(short));
+  return p.toString();
+}
 
 export function encodeInputs(i: SimInputs): string {
   const p = new URLSearchParams();

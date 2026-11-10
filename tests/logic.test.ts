@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { checks, cost, simulator, journey, growth, industries, industryById, platform, sources, story, storyFor, journeyStepsFor, growthStagesFor, pointsFor, fillObjects } from '../src/lib/content';
 import { computeAll, computeOption, tierJump, type CalcOption } from '../src/lib/calc';
 import { creditMath, creditCalendar } from '../src/lib/credits';
-import { evaluate, encodeInputs, decodeInputs, type SimInputs } from '../src/lib/simulator';
+import { BASELINE, evaluate, encodeInputs, decodeInputs, hasScenario, TRIGGERS, type SimInputs } from '../src/lib/simulator';
 import { computeHandoffs, computeSystems, tallyUpTo } from '../src/lib/journey';
 import { growthCounts } from '../src/lib/growth';
 import { numberSources } from '../src/lib/footnotes';
@@ -89,9 +89,21 @@ describe('Build Your Future simulator', () => {
     const ai = run({ aiConversations: 1000 }).findings.find((f) => f.id === 'ai')!;
     expect(ai.hubspotText).toContain('about 3 days');
   });
-  it('a single small business triggers nothing', () => {
-    const r = run({ technicians: 0, phone: false, erp: false, dispatch: false, brands: 1, linesOfBusiness: 1, aiConversations: 0, warehouse: false });
-    expect(r.findings).toHaveLength(0);
+  it('the day-one baseline triggers nothing', () => {
+    expect(evaluate(BASELINE, simulator.rules, A).findings).toHaveLength(0);
+  });
+  it('each control lights exactly its own tile from the baseline', () => {
+    const moves: Array<[Partial<SimInputs>, string]> = [
+      [{ brands: 2 }, 'brands'], [{ accessTeams: 2 }, 'access'], [{ users: 2525 }, 'users'], [{ linesOfBusiness: 2 }, 'lob'],
+      [{ technicians: 5 }, 'field'], [{ aiConversations: 200 }, 'ai'], [{ phone: true }, 'voice'], [{ erp: true }, 'erp'], [{ warehouse: true }, 'warehouse'],
+    ];
+    for (const [move, id] of moves) expect(evaluate({ ...BASELINE, ...move }, simulator.rules, A).findings.map((f) => f.id)).toEqual([id]);
+    expect(new Set(moves.map(([, id]) => id)).size).toBe(Object.keys(TRIGGERS).length);
+  });
+  it('only a link with scenario keys overrides the baseline', () => {
+    expect(hasScenario('')).toBe(false);
+    expect(hasScenario('seller=x')).toBe(false);
+    expect(hasScenario(encodeInputs(BASELINE))).toBe(true);
   });
   it('URL state round-trips', () => {
     const i = { ...generic, brands: 9, warehouse: true };

@@ -106,8 +106,8 @@ const CostSchema = z.object({
 const SellerSchema = z.object({ name: z.string(), title: z.string(), email: z.string(), phone: z.string(), meetingUrl: z.string() });
 
 const SimDefaults = z.object({
-  brands: z.number(), locations: z.number(), users: z.number(), linesOfBusiness: z.number(), technicians: z.number(),
-  aiConversations: z.number(), erp: z.boolean(), dispatch: z.boolean(), phone: z.boolean(), warehouse: z.boolean(),
+  brands: z.number(), accessTeams: z.number(), users: z.number(), linesOfBusiness: z.number(), technicians: z.number(),
+  aiConversations: z.number(), erp: z.boolean(), phone: z.boolean(), warehouse: z.boolean(),
 });
 const IndustriesSchema = z.object({
   industries: z.array(
