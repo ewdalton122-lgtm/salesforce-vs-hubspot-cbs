@@ -28,7 +28,7 @@ They are used unmodified to show Salesforce's own products. Account and person n
 
 ## Partner and technology logos
 
-Snowflake, AWS, Google Cloud, Databricks, Azure, Slack and Claude/Anthropic.
+Snowflake, AWS, Google Cloud, Databricks, Azure (Microsoft), Slack, Claude/Anthropic and Microsoft Teams (2025 logo, Wikimedia Commons).
 They are used only to show integrations, sourced from Simple Icons and Wikimedia Commons. Keep them as approved.
 
 ## Salesforce characters

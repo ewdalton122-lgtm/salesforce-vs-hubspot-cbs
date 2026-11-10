@@ -25,7 +25,10 @@ export function pageSourceOrder({ includeCsm = true }: { includeCsm?: boolean } 
       });
     }
   }
-  platform.layers.forEach((l) => push(l.source));
+  platform.layers.forEach((l) => {
+    push(l.source);
+    l.brands.forEach((b) => push(b.source));
+  });
   platform.openRail.forEach((r) => push(r.source));
   simulator.rules.forEach((r) => {
     push(r.salesforce.source);

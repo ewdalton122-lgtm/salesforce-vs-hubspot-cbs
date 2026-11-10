@@ -20,6 +20,16 @@
       "label": "Salesforce newsroom: Slackbot announcement (Jan 13, 2026)",
       "url": "https://www.salesforce.com/news/press-releases/2026/01/13/slackbot-announcement/",
       "asOf": "2026-01"
+    },
+    "sf-zero-copy-partners": {
+      "label": "Salesforce Zero Copy Partner Network",
+      "url": "https://www.salesforce.com/data/zero-copy-partner-network/",
+      "asOf": "2026-11"
+    },
+    "sf-teams-integration": {
+      "label": "Salesforce Help: Salesforce Microsoft Teams integration (Enterprise edition and up)",
+      "url": "https://help.salesforce.com/s/articleView?id=000389540&language=en_US&type=1",
+      "asOf": "2026-11"
     }
   }
 }

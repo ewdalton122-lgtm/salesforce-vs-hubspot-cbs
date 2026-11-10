@@ -156,7 +156,15 @@ const GrowthSchema = z.object({
 
 const PlatformSchema = z.object({
   title: z.string(), titleAccent: z.string(), subtitle: z.string(),
-  layers: z.array(z.object({ id: z.enum(['data', 'apps', 'agents', 'slack']), name: z.string(), tagline: z.string(), detail: z.string(), shot: z.string(), source: z.string() })).length(4),
+  layers: z
+    .array(
+      z.object({
+        id: z.enum(['data', 'apps', 'agents', 'slack']),
+        name: z.string(), tagline: z.string(), detail: z.string(), shot: z.string(), source: z.string(),
+        brands: z.array(z.object({ label: z.string(), logo: z.string().nullable(), source: z.string() })).default([]),
+      }),
+    )
+    .length(4),
   examples: z.record(z.record(z.array(z.string()))),
   openRail: z.array(z.object({ label: z.string(), logo: z.string().nullable(), source: z.string() })),
 });

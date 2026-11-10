@@ -10,6 +10,18 @@ const LAYER_ICONS = { data: Database, apps: LayoutGrid, agents: Bot, slack: Mess
 // Bottom to top: data is the foundation, Slack is where people meet the platform.
 const ORDER = ['data', 'apps', 'agents', 'slack'] as const;
 
+type Brand = (typeof platform.layers)[number]['brands'][number];
+
+// Logos drawn in white need a dark tile; everything else sits on white.
+const TILE_BG: Record<string, string> = { 'claude.svg': '#d97757' };
+const tileBg = (b: Brand) => (b.logo && TILE_BG[b.logo]) || '#ffffff';
+
+function BrandMark({ b, size = 14 }: { b: Brand; size?: number }) {
+  if (b.logo === 'sf') return <img src={asset('assets/images/brand/salesforce-logo.svg')} alt="" style={{ height: size * 0.72, width: 'auto' }} />;
+  if (b.logo) return <img src={asset(`assets/logos/${b.logo}`)} alt="" style={{ height: size, width: size }} className="object-contain" />;
+  return <span className="block rounded-full bg-sf-blue" style={{ height: size * 0.5, width: size * 0.5 }} />;
+}
+
 function Stack({ active, onPick }: { active: string; onPick: (id: string) => void }) {
   const reduce = useReducedMotion();
   const [rot, setRot] = useState({ x: 58, z: -38 });
@@ -54,6 +66,21 @@ function Stack({ active, onPick }: { active: string; onPick: (id: string) => voi
               }}
             >
               <span className="absolute inset-4 rounded-[26px] opacity-40" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,.55) 1px, transparent 1.2px)', backgroundSize: '18px 18px' }} />
+              <span className="absolute inset-x-5 bottom-[74px] flex flex-wrap gap-1.5" aria-hidden>
+                {layer.brands.map((b) => (
+                  <span
+                    key={b.label}
+                    className={`flex items-center gap-1.5 rounded-lg py-1 pl-1 pr-2 text-[12px] font-bold leading-none backdrop-blur-sm transition-colors duration-500 ${
+                      on ? 'bg-white/25 text-white ring-1 ring-white/60' : 'bg-white/10 text-white/80 ring-1 ring-white/25'
+                    }`}
+                  >
+                    <span className="grid h-5 w-5 place-items-center rounded-[5px]" style={{ background: tileBg(b) }}>
+                      <BrandMark b={b} size={14} />
+                    </span>
+                    {b.label}
+                  </span>
+                ))}
+              </span>
               <span className="absolute bottom-5 left-5 flex items-center gap-2.5">
                 <span className={`grid h-11 w-11 place-items-center rounded-xl ${on ? 'bg-white text-sf-blue' : 'bg-white/15 text-white'}`}>
                   <Icon size={22} aria-hidden />
@@ -137,6 +164,22 @@ export default function Platform() {
                     {layer.detail}
                     <Footnote id={layer.source} />
                   </p>
+                  {layer.brands.length > 0 && (
+                    <div className="mt-5">
+                      <p className="text-[13px] font-bold uppercase tracking-[0.16em] text-white/70">On this layer</p>
+                      <ul className="mt-2 flex flex-wrap gap-2">
+                        {layer.brands.map((b) => (
+                          <li key={b.label} className="flex items-center gap-2 rounded-xl bg-white/[.08] py-1.5 pl-1.5 pr-3 text-[14.5px] font-semibold ring-1 ring-white/15">
+                            <span className="grid h-7 w-7 place-items-center rounded-lg" style={{ background: tileBg(b) }}>
+                              <BrandMark b={b} size={18} />
+                            </span>
+                            {b.label}
+                            <Footnote id={b.source} />
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                   {examples.length > 0 && (
                     <div className="mt-5">
                       <p className="text-[13px] font-bold uppercase tracking-[0.16em] text-white/70">
