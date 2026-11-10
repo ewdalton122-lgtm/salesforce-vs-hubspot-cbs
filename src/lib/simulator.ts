@@ -45,7 +45,8 @@ export function evaluate(inputs: SimInputs, rules: SimRule[], a: CreditAssumptio
     const pred = TRIGGERS[r.id];
     if (!pred) throw new Error(`No trigger predicate for simulator rule "${r.id}"`);
     if (!pred(ctx)) continue;
-    findings.push({ ...r, hubspotText: r.hubspot.text.replace('{daysCovered}', String(credits.daysCovered)) });
+    const n = credits.daysCovered;
+    findings.push({ ...r, hubspotText: r.hubspot.text.replace('{daysCovered} days', `${n} ${n === 1 ? 'day' : 'days'}`).replace('{daysCovered}', String(n)) });
   }
   const counts: Record<string, number> = {};
   for (const f of findings) counts[f.hubspot.pill] = (counts[f.hubspot.pill] ?? 0) + 1;

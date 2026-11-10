@@ -175,7 +175,7 @@ const SimulatorSchema = z.object({
   assumptions: z.object({ creditsPerConversation: z.number(), includedCredits: z.number(), daysPerMonth: z.number(), tooltip: z.string(), source: z.string() }),
   rules: z.array(
     z.object({
-      id: z.string(), check: z.string(), trigger: z.string(),
+      id: z.string(), check: z.string(), trigger: z.string(), short: z.string(), when: z.string(),
       hubspot: z.object({ text: z.string(), pill: z.string(), source: z.string() }),
       salesforce: z.object({ text: z.string(), source: z.string() }),
     }),

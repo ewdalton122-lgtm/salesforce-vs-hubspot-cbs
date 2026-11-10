@@ -8,33 +8,150 @@
     "source": "hs-kb-credits"
   },
   "rules": [
-    { "id": "lob", "check": "data-model", "trigger": "linesOfBusiness >= 2",
-      "hubspot": { "text": "A separate process per business line typically needs custom objects, which are top tier only.", "pill": "topTier", "source": "hs-catalog-products" },
-      "salesforce": { "text": "Record types give each line of business its own process, fields and layouts.", "source": "sf-data-model" } },
-    { "id": "brands", "check": "data-model", "trigger": "brands >= 2",
-      "hubspot": { "text": "A company can have one parent; activities and deals don't roll up to the parent.", "pill": "limit", "source": "hs-kb-parent-child" },
-      "salesforce": { "text": "Multi-level account hierarchies roll up across every brand and location.", "source": "sf-data-model" } },
-    { "id": "access", "check": "governance", "trigger": "brands >= 2 || linesOfBusiness >= 2",
-      "hubspot": { "text": "Different access per brand or team needs field-level permissions, which are top tier only.", "pill": "topTier", "source": "hs-catalog-products" },
-      "salesforce": { "text": "Record-level security, sharing rules and role hierarchies across every business unit.", "source": "sf-data-model" } },
-    { "id": "users", "check": "data-model", "trigger": "users > 2500",
-      "hubspot": { "text": "Each HubSpot account is capped at 2,500 users.", "pill": "limit", "source": "hs-catalog-limits" },
-      "salesforce": { "text": "The same platform runs some of the world's largest enterprises.", "source": "positioning" } },
-    { "id": "field", "check": "operations", "trigger": "technicians > 0",
-      "hubspot": { "text": "No native field service; dispatch needs a marketplace app.", "pill": "app", "source": "hs-catalog-products" },
-      "salesforce": { "text": "Field Service: scheduling, dispatch and a technician mobile app on the same platform.", "source": "sf-field-service" } },
-    { "id": "voice", "check": "operations", "trigger": "phone === true",
-      "hubspot": { "text": "Customer Agent's voice channel is in beta.", "pill": "beta", "source": "hs-kb-credits" },
-      "salesforce": { "text": "Agentforce Voice is generally available.", "source": "sf-agentforce-voice" } },
-    { "id": "erp", "check": "ai-data", "trigger": "erp === true || dispatch === true",
-      "hubspot": { "text": "Extra API capacity is sold as an add-on; ask whether two-way ERP sync is native or a custom build.", "pill": "customBuild", "source": "hs-catalog-limits" },
-      "salesforce": { "text": "MuleSoft and Informatica connect the ERP, billing and dispatch systems.", "source": "sf-mulesoft" } },
-    { "id": "warehouse", "check": "ai-data", "trigger": "warehouse === true",
-      "hubspot": { "text": "Two-way data warehouse sync requires Data Hub.", "pill": "topTier", "source": "hs-pricing-data" },
-      "salesforce": { "text": "Data 360 Zero Copy reads warehouse data in place.", "source": "sf-q2-fy27" } },
-    { "id": "ai", "check": "ai-data", "trigger": "aiConversations > 0 && creditsNeeded > includedCredits",
-      "hubspot": { "text": "Included credits cover about {daysCovered} days a month. After that, agents pause unless you buy credit packs.", "pill": "limit", "source": "hs-kb-credits" },
-      "salesforce": { "text": "Flex Credits last the whole contract term, with no overage penalty.", "source": "sf-agentforce-pricing" } }
+    {
+      "id": "lob",
+      "check": "data-model",
+      "trigger": "linesOfBusiness >= 2",
+      "hubspot": {
+        "text": "A separate process per business line typically needs custom objects, which are top tier only.",
+        "pill": "topTier",
+        "source": "hs-catalog-products"
+      },
+      "salesforce": {
+        "text": "Record types give each line of business its own process, fields and layouts.",
+        "source": "sf-data-model"
+      },
+      "short": "A process per business line",
+      "when": "2+ lines of business"
+    },
+    {
+      "id": "brands",
+      "check": "data-model",
+      "trigger": "brands >= 2",
+      "hubspot": {
+        "text": "A company can have one parent; activities and deals don't roll up to the parent.",
+        "pill": "limit",
+        "source": "hs-kb-parent-child"
+      },
+      "salesforce": {
+        "text": "Multi-level account hierarchies roll up across every brand and location.",
+        "source": "sf-data-model"
+      },
+      "short": "Brands roll up to a parent",
+      "when": "2+ brands"
+    },
+    {
+      "id": "access",
+      "check": "governance",
+      "trigger": "brands >= 2 || linesOfBusiness >= 2",
+      "hubspot": {
+        "text": "Different access per brand or team needs field-level permissions, which are top tier only.",
+        "pill": "topTier",
+        "source": "hs-catalog-products"
+      },
+      "salesforce": {
+        "text": "Record-level security, sharing rules and role hierarchies across every business unit.",
+        "source": "sf-data-model"
+      },
+      "short": "Access by brand or team",
+      "when": "2+ brands or lines"
+    },
+    {
+      "id": "users",
+      "check": "data-model",
+      "trigger": "users > 2500",
+      "hubspot": {
+        "text": "Each HubSpot account is capped at 2,500 users.",
+        "pill": "limit",
+        "source": "hs-catalog-limits"
+      },
+      "salesforce": {
+        "text": "The same platform runs some of the world's largest enterprises.",
+        "source": "positioning"
+      },
+      "short": "More than 2,500 users",
+      "when": "2,500+ CRM users"
+    },
+    {
+      "id": "field",
+      "check": "operations",
+      "trigger": "technicians > 0",
+      "hubspot": {
+        "text": "No native field service; dispatch needs a marketplace app.",
+        "pill": "app",
+        "source": "hs-catalog-products"
+      },
+      "salesforce": {
+        "text": "Field Service: scheduling, dispatch and a technician mobile app on the same platform.",
+        "source": "sf-field-service"
+      },
+      "short": "Field dispatch",
+      "when": "Any field technicians"
+    },
+    {
+      "id": "voice",
+      "check": "operations",
+      "trigger": "phone === true",
+      "hubspot": {
+        "text": "Customer Agent's voice channel is in beta.",
+        "pill": "beta",
+        "source": "hs-kb-credits"
+      },
+      "salesforce": {
+        "text": "Agentforce Voice is generally available.",
+        "source": "sf-agentforce-voice"
+      },
+      "short": "AI answers the phone",
+      "when": "Customers call us"
+    },
+    {
+      "id": "erp",
+      "check": "ai-data",
+      "trigger": "erp === true || dispatch === true",
+      "hubspot": {
+        "text": "Extra API capacity is sold as an add-on; ask whether two-way ERP sync is native or a custom build.",
+        "pill": "customBuild",
+        "source": "hs-catalog-limits"
+      },
+      "salesforce": {
+        "text": "MuleSoft and Informatica connect the ERP, billing and dispatch systems.",
+        "source": "sf-mulesoft"
+      },
+      "short": "Two-way ERP sync",
+      "when": "ERP billing or dispatch"
+    },
+    {
+      "id": "warehouse",
+      "check": "ai-data",
+      "trigger": "warehouse === true",
+      "hubspot": {
+        "text": "Two-way data warehouse sync requires Data Hub.",
+        "pill": "topTier",
+        "source": "hs-pricing-data"
+      },
+      "salesforce": {
+        "text": "Data 360 Zero Copy reads warehouse data in place.",
+        "source": "sf-q2-fy27"
+      },
+      "short": "Warehouse data in place",
+      "when": "A data warehouse"
+    },
+    {
+      "id": "ai",
+      "check": "ai-data",
+      "trigger": "aiConversations > 0 && creditsNeeded > includedCredits",
+      "hubspot": {
+        "text": "Included credits cover about {daysCovered} days a month. After that, agents pause unless you buy credit packs.",
+        "pill": "limit",
+        "source": "hs-kb-credits"
+      },
+      "salesforce": {
+        "text": "Flex Credits last the whole contract term, with no overage penalty.",
+        "source": "sf-agentforce-pricing"
+      },
+      "short": "AI agents all month",
+      "when": "AI beyond included credits"
+    }
   ],
   "emptyState": "At this size, either works. Slide anything up and watch what changes.",
   "honestyNote": "This shows how capabilities and limits change as you grow, not prices. Salesforce adds licenses as you grow too, and every one lands on the same platform."
