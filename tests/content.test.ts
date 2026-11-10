@@ -137,7 +137,7 @@ describe('production build strips editor-only content', () => {
   });
 
   it('runs the suite against the stripped content the site ships', () => {
-    expect(proof.cuts ?? proof).not.toHaveProperty('citation');
+    expect(proof.customerSuccessMetrics).not.toHaveProperty('citation');
     expect(JSON.stringify(checks)).not.toContain('"guardrail"');
   });
 });
