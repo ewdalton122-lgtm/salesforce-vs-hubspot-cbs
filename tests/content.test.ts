@@ -135,4 +135,9 @@ describe('production build strips editor-only content', () => {
     expect(raw).toContain('Includes 500K Flex Credits per org.');
     expect(raw).toContain('"hiddenCosts"');
   });
+
+  it('runs the suite against the stripped content the site ships', () => {
+    expect(proof.cuts ?? proof).not.toHaveProperty('citation');
+    expect(JSON.stringify(checks)).not.toContain('"guardrail"');
+  });
 });

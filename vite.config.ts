@@ -3,11 +3,11 @@ import react from '@vitejs/plugin-react';
 import type { Plugin } from 'vite';
 import { stripInternal } from './src/lib/stripInternal';
 
-/** Removes editor-only notes and guardrails from content JSON in production builds. */
+/** Removes editor-only notes and guardrails from content JSON in production builds and tests. */
 function stripInternalContent(): Plugin {
   return {
     name: 'strip-internal-content',
-    apply: 'build',
+    apply: (_config, env) => env.command === 'build' || !!process.env.VITEST,
     enforce: 'pre',
     transform(code, id) {
       if (!/\/src\/content\/[^/]+\.json$/.test(id)) return null;

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
 import { cost, simulator, journey, growth, industryById } from '../src/lib/content';
 import { computeAll, computeOption, tierJump, type CalcOption } from '../src/lib/calc';
 import { creditMath, creditCalendar } from '../src/lib/credits';
@@ -10,7 +11,8 @@ import { footnoteNumbers, pageSourceOrder } from '../src/lib/sourceOrder';
 
 const options = cost.options as CalcOption[];
 const base = { salesSeats: 30, serviceSeats: 20, years: 3, includeDataHub: false, includeSfApiAddon: false };
-const ref = cost.referenceCheck as Record<string, { annual: number; threeYear: number }>;
+// The fixture is editor-only and stripped from the bundle, so read it from the source file.
+const ref = JSON.parse(readFileSync('src/content/cost-calculator.json', 'utf8')).referenceCheck as Record<string, { annual: number; threeYear: number }>;
 const opt = (id: string) => options.find((o) => o.id === id)!;
 
 describe('cost calculator matches cost-calculator.json referenceCheck', () => {

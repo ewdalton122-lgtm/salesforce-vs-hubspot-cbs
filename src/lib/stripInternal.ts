@@ -14,7 +14,6 @@ export const INTERNAL_KEYS = new Set([
   'referenceCheck',
   'micrositeDetail',
   'analyst',
-  'trigger',
   'hubs',
 ]);
 
