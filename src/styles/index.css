@@ -320,8 +320,10 @@
 .flip {
   perspective: 1400px;
 }
+/* Both faces share one grid cell, so the card is as tall as its taller face. */
 .flip-inner {
   position: relative;
+  display: grid;
   transform-style: preserve-3d;
   transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
@@ -329,13 +331,154 @@
   transform: rotateY(180deg);
 }
 .flip-face {
+  grid-area: 1 / 1;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
 .flip-back {
+  transform: rotateY(180deg);
+}
+
+/* Prove it: question rows */
+.ask-row {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.025));
+  box-shadow: inset 0 0 0 1px rgba(127, 211, 255, 0.14);
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease,
+    background 0.35s ease;
+}
+.ask-row::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: linear-gradient(180deg, #00b3ff, #0176d3);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.ask-row::after {
+  content: '';
   position: absolute;
   inset: 0;
-  transform: rotateY(180deg);
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 35%, rgba(127, 211, 255, 0.16) 50%, transparent 65%);
+  transform: translateX(-110%);
+}
+.ask-row:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 0 0 1px rgba(127, 211, 255, 0.4),
+    0 16px 40px rgba(0, 110, 255, 0.22);
+}
+.ask-row:hover::after {
+  transform: translateX(110%);
+  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ask-row:hover::before,
+.ask-row.is-open::before {
+  opacity: 1;
+}
+.ask-row.is-open {
+  background: linear-gradient(135deg, rgba(27, 150, 255, 0.16), rgba(255, 255, 255, 0.03));
+  box-shadow:
+    inset 0 0 0 1px rgba(127, 211, 255, 0.45),
+    0 20px 50px rgba(0, 110, 255, 0.25);
+}
+.ask-icon {
+  color: #fff;
+  background: linear-gradient(140deg, #1b96ff, #0646a8);
+  box-shadow:
+    0 6px 18px rgba(0, 140, 255, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ask-row:hover .ask-icon,
+.ask-row.is-open .ask-icon {
+  transform: scale(1.08) rotate(-4deg);
+}
+
+/* Growth slider */
+.grow-slider input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  background: transparent;
+  opacity: 0;
+  cursor: grab;
+  z-index: 3;
+}
+.grow-slider input[type='range']:active {
+  cursor: grabbing;
+}
+.grow-slider input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 56px;
+  height: 56px;
+}
+.grow-slider input[type='range']::-moz-range-thumb {
+  width: 56px;
+  height: 56px;
+  border: 0;
+}
+.grow-fill {
+  background: linear-gradient(90deg, #0646a8, #0176d3 40%, #1b96ff 75%, #00b3ff);
+  box-shadow: 0 0 24px rgba(0, 179, 255, 0.55);
+}
+.grow-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: repeating-linear-gradient(115deg, transparent 0 18px, rgba(255, 255, 255, 0.22) 18px 26px);
+  background-size: 200% 100%;
+  animation: growFlow 1.6s linear infinite;
+}
+@keyframes growFlow {
+  to {
+    background-position: -88px 0;
+  }
+}
+.grow-thumb {
+  background: radial-gradient(circle at 35% 30%, #ffffff, #d7ecff 55%, #9fd3ff);
+  box-shadow:
+    0 0 0 6px rgba(27, 150, 255, 0.35),
+    0 0 34px rgba(0, 179, 255, 0.75),
+    0 10px 24px rgba(0, 0, 0, 0.35);
+}
+.grow-pulse {
+  animation: growPulse 1.8s ease-out infinite;
+}
+@keyframes growPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 179, 255, 0.7);
+  }
+  100% {
+    box-shadow: 0 0 0 26px rgba(0, 179, 255, 0);
+  }
+}
+.grow-nudge {
+  animation: growNudge 1.4s ease-in-out infinite;
+}
+@keyframes growNudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(8px);
+  }
+}
+.grow-slider input[type='range']:focus-visible ~ .grow-thumb-wrap .grow-thumb {
+  outline: 3px solid #fff;
+  outline-offset: 4px;
 }
 
 /* Range inputs */
@@ -386,9 +529,14 @@ input[type='range'].range.bright {
   .flip-back {
     transform: none;
     opacity: 0;
+    pointer-events: none;
   }
   .flip[data-flipped='true'] .flip-back {
     opacity: 1;
+    pointer-events: auto;
+  }
+  .flip[data-flipped='true'] .flip-front {
+    pointer-events: none;
   }
 }
 

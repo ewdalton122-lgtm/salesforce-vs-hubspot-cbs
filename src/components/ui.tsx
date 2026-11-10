@@ -12,18 +12,27 @@ export function Footnote({ id, tone = 'dark' }: { id: string; tone?: 'dark' | 'b
   const n = footnoteNumber(id);
   const s = sources[id];
   if (!n || !s) return <sup className="ml-0.5 text-[11px] font-bold text-amber-300">[source pending]</sup>;
-  const color = tone === 'bright' ? 'text-sf-blue' : tone === 'gray' ? 'text-hs-text' : 'text-sf-sky';
+  const color =
+    tone === 'bright'
+      ? 'text-sf-blue/70 hover:text-sf-blue hover:bg-sf-blue/10'
+      : tone === 'gray'
+        ? 'text-current opacity-55 hover:opacity-100 hover:bg-white/10'
+        : 'text-sf-sky/75 hover:text-sf-sky hover:bg-white/10';
   const tip = `${s.label}${s.asOf ? ` (as of ${formatAsOf(s.asOf)})` : ''}`;
+  const go = () => scrollToId(`src-${id}`);
+  // An inline span (not a button, which lays out as inline-block) so the marker never wraps away from its word.
   return (
-    <sup className="group relative ml-0.5 align-super">
-      <button
-        type="button"
-        onClick={() => scrollToId(`src-${id}`)}
-        className={`text-[12px] font-extrabold leading-none ${color} hover:underline`}
+    <sup className="group relative top-[-0.55em] ml-[2px] align-baseline text-[0.62em] leading-none">
+      <span
+        role="button"
+        tabIndex={0}
+        onClick={go}
+        onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), go())}
+        className={`cursor-pointer rounded-[3px] px-[2px] font-semibold tabular-nums tracking-normal transition-colors focus-visible:outline focus-visible:outline-1 ${color}`}
         aria-label={`Source ${n}: ${tip}`}
       >
         {n}
-      </button>
+      </span>
       <span
         role="tooltip"
         className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 w-max max-w-[280px] -translate-x-1/2 rounded-lg bg-[#020818] px-3 py-2 text-left text-[13px] font-medium normal-case leading-snug tracking-normal text-white opacity-0 shadow-xl ring-1 ring-white/15 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100"

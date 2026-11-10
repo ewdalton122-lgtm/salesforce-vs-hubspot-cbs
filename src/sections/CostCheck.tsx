@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowRight, Info, Layers } from 'lucide-react';
+import { ArrowRight, ChevronsRight, Info, Layers, Play, RotateCcw, TrendingUp } from 'lucide-react';
 import { cost, growth } from '../lib/content';
 import { computeAll, tierJump, usd, type CalcInputs } from '../lib/calc';
 import { growthCounts } from '../lib/growth';
@@ -10,10 +10,111 @@ import { track } from '../lib/env';
 const DISCLAIMER =
   'List prices, per user per month, billed annually, as of Nov 2026. Excludes discounts, partner services and third-party apps. Validate scope with your Salesforce account executive.';
 
+const THUMB = 56;
+const at = (f: number) => `calc(${THUMB / 2}px + (100% - ${THUMB}px) * ${f})`;
+
+function GrowthSlider({ stage, setStage }: { stage: number; setStage: (n: number) => void }) {
+  const n = growth.stages.length;
+  const [touched, setTouched] = useState(false);
+  const [playing, setPlaying] = useState(false);
+  const timer = useRef<number>();
+  const f = (stage - 1) / (n - 1);
+
+  useEffect(() => {
+    if (!playing) return;
+    timer.current = window.setTimeout(() => (stage < n ? setStage(stage + 1) : setPlaying(false)), stage === 1 ? 500 : 1100);
+    return () => window.clearTimeout(timer.current);
+  }, [playing, stage, n, setStage]);
+
+  const choose = (v: number) => {
+    setPlaying(false);
+    setTouched(true);
+    setStage(v);
+  };
+  const play = () => {
+    setTouched(true);
+    setStage(1);
+    setPlaying(true);
+  };
+
+  return (
+    <div className="mt-7 rounded-2xl bg-gradient-to-r from-sf-deep/40 via-white/[.04] to-sf-electric/15 p-4 ring-1 ring-sf-cloud/25 sm:p-6">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="flex items-center gap-2.5 text-[16px] font-bold text-white sm:text-[17px]">
+          <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-sf-electric/30 text-sf-sky ring-1 ring-sf-cloud/40">
+            <TrendingUp size={17} aria-hidden />
+          </span>
+          As your business grows, slide right. Watch what each platform adds.
+        </p>
+        <button type="button" onClick={play} className="btn-ghost !px-4 !py-2 !text-[14px]">
+          {stage === n && !playing ? <RotateCcw size={15} aria-hidden /> : <Play size={15} aria-hidden />}
+          {playing ? 'Growing...' : stage === n ? 'Replay growth' : 'Watch it grow'}
+        </button>
+      </div>
+
+      <div className="grow-slider relative mt-5 h-[72px] select-none">
+        <div className="absolute top-1/2 h-4 -translate-y-1/2 rounded-full bg-white/10 ring-1 ring-white/10" style={{ left: THUMB / 2, right: THUMB / 2 }}>
+          <div className="grow-fill absolute inset-y-0 left-0 rounded-full transition-[width] duration-300 ease-out" style={{ width: `${f * 100}%` }} />
+        </div>
+        {growth.stages.map((s, i) => (
+          <span
+            key={s.stage}
+            aria-hidden
+            className={`absolute top-1/2 h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full transition-all duration-300 ${
+              i < stage ? 'bg-white shadow-[0_0_12px_rgba(127,211,255,.9)]' : 'bg-white/25 ring-2 ring-white/10'
+            }`}
+            style={{ left: at(i / (n - 1)) }}
+          />
+        ))}
+        <input
+          type="range"
+          min={1}
+          max={n}
+          step={1}
+          value={stage}
+          onChange={(e) => choose(Number(e.target.value))}
+          aria-label="Growth stage"
+          aria-valuetext={`Stage ${stage} of ${n}: ${growth.stages[stage - 1].title}`}
+        />
+        <div className="grow-thumb-wrap pointer-events-none absolute top-1/2 -translate-x-1/2 -translate-y-1/2 transition-[left] duration-300 ease-out" style={{ left: at(f) }}>
+          <div className={`grow-thumb grid place-items-center rounded-full text-sf-blue ${touched ? '' : 'grow-pulse'}`} style={{ width: THUMB, height: THUMB }}>
+            <ChevronsRight size={28} strokeWidth={2.6} aria-hidden />
+          </div>
+          {!touched && (
+            <span className="absolute left-full top-1/2 ml-4 flex -translate-y-1/2 items-center gap-1 whitespace-nowrap rounded-full bg-white px-3.5 py-1.5 text-[14px] font-extrabold text-sf-blue shadow-[0_8px_24px_rgba(0,0,0,.35)]">
+              Drag to grow <ChevronsRight size={17} className="grow-nudge" aria-hidden />
+            </span>
+          )}
+        </div>
+      </div>
+
+      <div className="relative mt-1 hidden h-[44px] md:block">
+        {growth.stages.map((s, i) => {
+          const edge = i === 0 ? 'translate-x-0 text-left' : i === n - 1 ? '-translate-x-full text-right' : '-translate-x-1/2 text-center';
+          const pos = i === 0 ? '0px' : i === n - 1 ? '100%' : at(i / (n - 1));
+          return (
+            <button
+              key={s.stage}
+              type="button"
+              tabIndex={-1}
+              onClick={() => choose(s.stage)}
+              className={`absolute top-0 w-[128px] text-[13px] leading-tight transition-colors ${edge} ${
+                s.stage === stage ? 'font-extrabold text-white' : s.stage < stage ? 'font-semibold text-sf-sky' : 'font-semibold text-night-dim hover:text-white'
+              }`}
+              style={{ left: pos }}
+            >
+              {s.title}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function GrowthStack() {
-  const [stage, setStage] = useState(growth.stages.length);
+  const [stage, setStage] = useState(1);
   const counts = growthCounts(growth.stages, stage);
-  const fill = `${((stage - 1) / (growth.stages.length - 1)) * 100}%`;
   return (
     <div className="glass-strong p-6 sm:p-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
@@ -21,28 +122,19 @@ function GrowthStack() {
           <p className="kicker-dark">Grow it yourself</p>
           <h4 className="mt-2 text-[24px] font-extrabold sm:text-[30px]">Seven stages of growth. Count what you add.</h4>
         </div>
-        <p className="text-[16px] text-night-dim">
-          Stage {stage}: <strong className="text-white">{growth.stages[stage - 1].title}</strong>
+        <p className="flex items-center gap-3 text-[16px] text-night-dim">
+          <span className="rounded-full bg-sf-electric/25 px-3 py-1 text-[13px] font-extrabold uppercase tracking-[0.14em] text-sf-sky ring-1 ring-sf-cloud/40">
+            Stage {stage} of {growth.stages.length}
+          </span>
+          <strong className="text-white">{growth.stages[stage - 1].title}</strong>
         </p>
       </div>
-      <label className="mt-6 block">
-        <span className="sr-only">Growth stage</span>
-        <input
-          type="range"
-          className="range"
-          min={1}
-          max={growth.stages.length}
-          value={stage}
-          style={{ ['--fill' as string]: fill }}
-          onChange={(e) => setStage(Number(e.target.value))}
-          aria-valuetext={`Stage ${stage}: ${growth.stages[stage - 1].title}`}
-        />
-      </label>
+      <GrowthSlider stage={stage} setStage={setStage} />
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <div>
           <p className="flex items-center justify-between text-[14px] font-extrabold uppercase tracking-[0.16em] text-sf-sky">
-            Salesforce <span className="normal-case tracking-normal text-white">{counts.salesforceTiles} capabilities, one platform</span>
+            Salesforce <span className="normal-case tracking-normal text-white">{counts.salesforceTiles} {counts.salesforceTiles === 1 ? 'capability' : 'capabilities'}, one platform</span>
           </p>
           <div className="mt-3 rounded-2xl bg-gradient-to-b from-sf-electric/30 to-sf-deep/40 p-3 ring-1 ring-sf-cloud/40">
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -54,7 +146,9 @@ function GrowthStack() {
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.8 }}
-                    className="rounded-xl bg-white/[.12] px-3 py-2.5 text-[14.5px] font-bold leading-snug ring-1 ring-white/20"
+                    className={`rounded-xl px-3 py-2.5 text-[14.5px] font-bold leading-snug transition-[box-shadow,background-color] duration-500 ${
+                      s.stage === stage ? 'bg-sf-electric/35 ring-2 ring-sf-cloud shadow-[0_0_24px_rgba(0,179,255,.45)]' : 'bg-white/[.12] ring-1 ring-white/20'
+                    }`}
                   >
                     {s.salesforce.label}
                     <Footnote id={s.salesforce.source} />
@@ -81,7 +175,9 @@ function GrowthStack() {
                     initial={{ opacity: 0, y: -30 }}
                     animate={{ opacity: 1, y: 0, rotate: (((s.stage * 7 + j * 3) % 5) - 2) * 0.35 }}
                     exit={{ opacity: 0, y: -30 }}
-                    className="flex items-center justify-between gap-2 rounded-lg bg-[#4a505d] px-3 py-2 text-[14px] font-semibold text-[#e6e9ef]"
+                    className={`flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-[14px] font-semibold text-[#e6e9ef] transition-colors duration-500 ${
+                      s.stage === stage ? 'bg-[#5d6473] ring-1 ring-white/40' : 'bg-[#4a505d]'
+                    }`}
                   >
                     <span>
                       {b.label}
