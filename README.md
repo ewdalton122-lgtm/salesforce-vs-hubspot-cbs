@@ -2,7 +2,7 @@
 
 A customer-facing compete microsite for consumer business services: waste and recycling, water, facilities, HVAC and home services, construction and AEC, staffing, legal and professional services, and logistics. The v4 master video is the hero; under it, a scroll-driven 3D story called **Two Futures** runs the same business on Salesforce (left, glowing blue) and on HubSpot (right, neutral gray) through the five checks.
 
-Content follows the Mesh build kit v4 (`docs/MICROSITE_BUILD_SPEC.md`). Every factual claim carries a numbered source.
+Content follows the Mesh build kit v4 (the kit spec is kept locally as `docs/MICROSITE_BUILD_SPEC.md` and is not committed). Every factual claim carries a numbered source.
 
 ## Run it
 

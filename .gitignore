@@ -3,3 +3,6 @@ dist
 .DS_Store
 *.local
 .shots
+
+# Internal build kit spec (kept local, not published)
+docs/MICROSITE_BUILD_SPEC.md
